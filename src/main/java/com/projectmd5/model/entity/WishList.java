@@ -20,6 +20,7 @@ public class WishList {
    @JoinColumn(name = "userId")
    private User user;
 
-   @OneToMany(mappedBy = "productId")
-   private List<Product> product;
+   @ManyToOne
+   @JoinColumn(name = "productId")
+   private Product product;
 }

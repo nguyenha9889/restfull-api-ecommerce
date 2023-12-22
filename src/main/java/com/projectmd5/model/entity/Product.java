@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -46,7 +47,6 @@ public class Product {
    @Temporal(TemporalType.DATE)
    private Date updatedAt;
 
-   @ManyToOne
-   @JoinColumn(name = "wishListId")
-   private WishList wishLists;
+   @OneToMany(mappedBy = "product")
+   private List<WishList> wishLists;
 }
