@@ -1,5 +1,6 @@
 package com.projectmd5.security.principal;
 
+import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.entity.User;
 import com.projectmd5.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class UserDetailCustomService implements UserDetailsService {
    @Override
    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
       User user = userRepository.findByUsername(username).orElseThrow(
-            () -> new UsernameNotFoundException("Username not found"));
+            () -> new ResourceNotFoundException("username not found"));
 
       List<GrantedAuthority> authorities = user.getRoles().stream().map(
             role -> new SimpleGrantedAuthority(role.getRoleName().name())

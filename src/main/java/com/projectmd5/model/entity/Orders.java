@@ -29,6 +29,7 @@ public class Orders {
    @OneToMany(mappedBy = "order")
    private List<OrderDetail> orderDetails;
 
+   @Column(precision=10, scale=2)
    private BigDecimal totalPrice;
 
    @Enumerated(EnumType.STRING)

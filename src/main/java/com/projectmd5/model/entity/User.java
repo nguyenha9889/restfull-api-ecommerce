@@ -1,10 +1,8 @@
 package com.projectmd5.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,11 +12,14 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
-      @UniqueConstraint(columnNames = {"username", "email", "phone"}),
+      @UniqueConstraint(columnNames = "username"),
+      @UniqueConstraint(columnNames = "email"),
+      @UniqueConstraint(columnNames = "phone")
 })
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class User {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,4 +61,10 @@ public class User {
 
    @OneToMany(mappedBy = "user")
    private List<WishList> wishLists;
+
+   @OneToMany(mappedBy = "user")
+   private List<Cart> carts;
+
+   @OneToMany(mappedBy = "user")
+   private List<Orders> orders;
 }

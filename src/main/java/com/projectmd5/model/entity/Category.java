@@ -1,7 +1,7 @@
 package com.projectmd5.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +28,7 @@ public class Category {
 
    private boolean status;
 
+   @JsonIgnore
    @OneToMany(mappedBy = "category")
    private List<Product> products;
 }

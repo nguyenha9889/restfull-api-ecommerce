@@ -1,7 +1,7 @@
 package com.projectmd5.security.jwt;
 
+import com.projectmd5.exception.BadRequestException;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
@@ -10,17 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
-/**
- * Lớp này có 3 chức năng chính:
- * generate JWT, refresh Token
- * get JWT, refresh Token from Cookies
- * validate a JWT: JWT Access Token is expired with ExpiredJwtException
- */
 @Component
-@Slf4j
-public class JwtUtils {
+public class JwtTokenBuilder {
    @Value("${jwt.secret-key}")
    private String secretKey;
    @Value("${jwt.expired.access-token}")
@@ -53,25 +47,23 @@ public class JwtUtils {
 
    public boolean validateToken(String token) {
       try {
-         Jwts.parserBuilder().setSigningKey(key()).build().parse(token);
+         Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token);
          return true;
       } catch (SignatureException e) {
-         log.error("Invalid JWT signature: {}", e.getMessage());
+         throw new BadRequestException("Invalid JWT signature" + e.getMessage());
       } catch (MalformedJwtException e) {
-         log.error("Invalid JWT token: {}", e.getMessage());
+         throw new BadRequestException("Invalid JWT token" + e.getMessage());
       } catch (ExpiredJwtException e) {
-         log.error("JWT token is expired: {}", e.getMessage());
+         throw new BadRequestException("JWT token is expired" + e.getMessage());
       } catch (UnsupportedJwtException e) {
-         log.error("JWT token is unsupported: {}", e.getMessage());
+         throw new BadRequestException("JWT token is unsupported" + e.getMessage());
       } catch (IllegalArgumentException e) {
-         log.error("JWT claims string is empty: {}", e.getMessage());
+         throw new BadRequestException("JWT claims string is empty" + e.getMessage());
       }
 
-      return false;
    }
 
    private Key key() {
-      byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-      return Keys.hmacShaKeyFor(keyBytes);
+      return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
    }
 }

@@ -14,7 +14,5 @@ public interface IGenericService<T, E> {
    default void save(T t) {
    }
 
-   default int delete(E id) {
-      return 0;
-   }
+   default void delete(E id) {}
 }

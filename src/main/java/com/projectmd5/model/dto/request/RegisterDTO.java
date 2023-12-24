@@ -6,25 +6,25 @@ import com.projectmd5.validation.PhoneUnique;
 import com.projectmd5.validation.UserNameUnique;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @PasswordMatching(
       password = "password",
       confirmPassword = "confirmPassword"
 )
-public class RegisterRequest {
+public class RegisterDTO {
    @NotBlank(message = "Full name can not be blank")
    private String fullName;
 
-   // other pattern special character (?=.*[@#$%^&+=!*()])
-   @Size(min = 6, max = 100, message = "Username must be from 6 to 100 characters")
-   @Pattern(regexp = "(?!.*\\W)", message = "Username must not contain any special characters")
+   @NotBlank(message = "User name can not be blank")
+   @Pattern(regexp = "(?!.*[@#$%^&+=!*()]).{6,30}",
+         message = "Username must be from 6 to 20 characters and does not contain any special characters")
    @UserNameUnique
    private String username;
 
@@ -48,4 +48,36 @@ public class RegisterRequest {
    private String address;
 
    private Set<String> roles;
+
+   public void setFullName(String fullName) {
+      this.fullName = fullName;
+   }
+
+   public void setUsername(String username) {
+      this.username = username.trim();
+   }
+
+   public void setEmail(String email) {
+      this.email = email.trim();
+   }
+
+   public void setPhone(String phone) {
+      this.phone = phone.trim();
+   }
+
+   public void setPassword(String password) {
+      this.password = password;
+   }
+
+   public void setConfirmPassword(String confirmPassword) {
+      this.confirmPassword = confirmPassword;
+   }
+
+   public void setAddress(String address) {
+      this.address = address;
+   }
+
+   public void setRoles(Set<String> roles) {
+      this.roles = roles;
+   }
 }

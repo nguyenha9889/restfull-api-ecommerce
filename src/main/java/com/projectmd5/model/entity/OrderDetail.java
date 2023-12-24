@@ -27,6 +27,9 @@ public class OrderDetail {
 
    @Column(length = 100)
    private String name;
+
+   @Column(precision=10, scale=2)
    private BigDecimal unitPrice;
+
    private int orderQuantity;
 }

@@ -23,14 +23,14 @@ import java.io.IOException;
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
    private final UserDetailsService userDetailsService;
-   private final JwtUtils jwtUtils;
+   private final JwtTokenBuilder jwtTokenBuilder;
 
    @Override
    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
       try {
          String token = getTokenFromRequest(request);
-         if (token != null && jwtUtils.validateToken(token)) {
-            String username = jwtUtils.getUserNameFromToken(token);
+         if (token != null && jwtTokenBuilder.validateToken(token)) {
+            String username = jwtTokenBuilder.getUserNameFromToken(token);
             UserDetails principal = userDetailsService.loadUserByUsername(username);
 
             UsernamePasswordAuthenticationToken authentication =

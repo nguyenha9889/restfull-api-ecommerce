@@ -1,4 +1,4 @@
 package com.projectmd5.model.dto.request;
 
-public class AddressRequest {
+public class AddressDTO {
 }

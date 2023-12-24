@@ -1,8 +1,7 @@
 package com.projectmd5.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +27,7 @@ public class Product {
    private String productName;
 
    @Column(length = 100)
+   @GeneratedValue(strategy = GenerationType.UUID)
    private String sku;
 
    @Column(columnDefinition = "text")
@@ -37,16 +37,22 @@ public class Product {
    @JoinColumn(name = "categoryId")
    private Category category;
 
-
+   @Column(precision=10, scale=2)
    private BigDecimal unitPrice;
    private int quantity;
    private String imagePath;
 
    @Temporal(TemporalType.DATE)
-   private Date createdAt = new Date();
+   private Date createdAt;
    @Temporal(TemporalType.DATE)
    private Date updatedAt;
 
    @OneToMany(mappedBy = "product")
    private List<WishList> wishLists;
+
+   @OneToMany(mappedBy = "product")
+   private List<Cart> carts;
+
+   @OneToMany(mappedBy = "product")
+   private List<OrderDetail> orderDetails;
 }

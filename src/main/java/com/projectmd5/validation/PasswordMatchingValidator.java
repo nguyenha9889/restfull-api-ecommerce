@@ -4,23 +4,27 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
 
-import java.util.Objects;
-
 public class PasswordMatchingValidator implements ConstraintValidator<PasswordMatching, Object> {
 
-   private String password;
-   private String confirmPassword;
+   private String passwordField;
+   private String confirmPasswordField;
    @Override
    public void initialize(PasswordMatching matching) {
-      this.password = matching.password();
-      this.confirmPassword = matching.confirmPassword();
+      passwordField = matching.password();
+      confirmPasswordField = matching.confirmPassword();
    }
 
    @Override
-   public boolean isValid(Object value, ConstraintValidatorContext constraintValidatorContext) {
-      Object passwordValue = new BeanWrapperImpl(value).getPropertyValue(password);
-      Object confirmPasswordValue = new BeanWrapperImpl(value).getPropertyValue(confirmPassword);
+   public boolean isValid(Object value, ConstraintValidatorContext context) {
+      Object passwordValue = new BeanWrapperImpl(value).getPropertyValue(passwordField);
+      Object confirmPasswordValue = new BeanWrapperImpl(value).getPropertyValue(confirmPasswordField);
 
-      return Objects.equals(passwordValue, confirmPasswordValue);
+      if (passwordValue==null || !passwordValue.equals(confirmPasswordValue)){
+         context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+               .addPropertyNode(confirmPasswordField)
+               .addConstraintViolation();
+         return false;
+      }
+      return true;
    }
 }

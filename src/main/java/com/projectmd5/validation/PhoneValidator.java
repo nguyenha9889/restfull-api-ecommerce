@@ -12,6 +12,6 @@ public class PhoneValidator implements ConstraintValidator<PhoneUnique, String> 
    private final IUserService userService;
    @Override
    public boolean isValid(String phone, ConstraintValidatorContext constraintValidatorContext) {
-      return !userService.existsByUsername(phone);
+      return !userService.existsByPhone(phone);
    }
 }
