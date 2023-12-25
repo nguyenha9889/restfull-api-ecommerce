@@ -1,5 +1,6 @@
 package com.projectmd5.controller.admin;
 
+import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.model.dto.request.CategoryDTO;
 import com.projectmd5.model.dto.response.CategoryResponse;
 import com.projectmd5.model.entity.Category;
@@ -39,6 +40,11 @@ public class CategoryController {
    }
    @PostMapping
    public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDTO cateDTO){
+
+      if (categoryService.existCategoryName(null, cateDTO.getCategoryName())){
+         throw new BadRequestException("Category name is existed!");
+      }
+
       Category cate = categoryService.create(cateDTO);
       categoryService.save(cate);
       CategoryDTO cateDTONew = modelMapper.map(cate, CategoryDTO.class);
@@ -49,6 +55,11 @@ public class CategoryController {
    @PutMapping("/{categoryId}")
    public ResponseEntity<?> updateCategory(@Valid @RequestBody CategoryDTO cateDTO,
                                            @PathVariable Long categoryId){
+
+      if (categoryService.existCategoryName(categoryId, cateDTO.getCategoryName())){
+         throw new BadRequestException("Category name is existed!");
+      }
+
       Category cateUpdate = categoryService.edit(cateDTO, categoryId);
       categoryService.save(cateUpdate);
 

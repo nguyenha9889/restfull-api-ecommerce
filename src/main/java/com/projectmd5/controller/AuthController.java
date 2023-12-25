@@ -2,7 +2,7 @@ package com.projectmd5.controller;
 
 import com.projectmd5.model.dto.request.LoginDTO;
 import com.projectmd5.model.dto.request.RegisterDTO;
-import com.projectmd5.model.dto.response.UserResponse;
+import com.projectmd5.model.dto.response.JwtResponse;
 import com.projectmd5.model.entity.User;
 import com.projectmd5.service.IUserService;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class AuthController {
 
    @PostMapping("/sign-in")
    public ResponseEntity<?> signIn(@Valid @RequestBody LoginDTO login) {
-      UserResponse userResponse = userService.login(login);
-      return ResponseEntity.ok(userResponse);
+      JwtResponse jwtResponse = userService.login(login);
+      return ResponseEntity.ok(jwtResponse);
    }
 }

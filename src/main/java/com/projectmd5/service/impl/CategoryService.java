@@ -15,12 +15,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
    private final ICategoryRepository categoryRepository;
    private final ModelMapper modelMapper;
+
+   @Override
+   public List<Category> findAll() {
+      return categoryRepository.findAll();
+   }
 
    @Override
    public Category findById(Long id) {
@@ -84,7 +90,12 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public boolean existByCategoryName(String name) {
-      return categoryRepository.existsByCategoryNameEqualsIgnoreCase(name.trim());
+   public boolean existCategoryName(Long id, String name) {
+      for (Category c: findAll()) {
+         if (c.getCategoryName().equalsIgnoreCase(name.trim())) {
+            return !Objects.equals(c.getCategoryId(), id);
+         }
+      }
+      return false;
    }
 }

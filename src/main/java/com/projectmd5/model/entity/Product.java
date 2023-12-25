@@ -1,6 +1,5 @@
 package com.projectmd5.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 @Entity
@@ -26,9 +26,9 @@ public class Product {
    @Column(length = 100)
    private String productName;
 
-   @Column(length = 100)
+   @Column(length = 100,unique = true, nullable = false)
    @GeneratedValue(strategy = GenerationType.UUID)
-   private String sku;
+   private String sku = UUID.randomUUID().toString();
 
    @Column(columnDefinition = "text")
    private String description;

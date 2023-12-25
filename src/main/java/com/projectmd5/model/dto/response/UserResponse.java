@@ -1,5 +1,6 @@
 package com.projectmd5.model.dto.response;
 
+import com.projectmd5.model.dto.request.RegisterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UserResponse {
-   private Long userId;
-   private String username;
-   private String email;
-   private List<String> roles;
-   private String accessToken;
-   private String refreshToken;
-   private final String type = "Bearer Token";
+   private List<RegisterDTO> users;
+   private int pageNo;
+   private int pageSize;
+   private long totalElements;
+   private int totalPages;
+   private boolean last;
 }

@@ -8,6 +8,5 @@ public interface ICategoryService extends IGenericService<Category, Long> {
    CategoryResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir);
    Category create(CategoryDTO cateDTO);
    Category edit(CategoryDTO cateDTO, Long categoryId);
-   boolean existByCategoryName(String name);
-
+   boolean existCategoryName(Long id, String name);
 }

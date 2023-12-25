@@ -11,9 +11,11 @@ public class TypeFileValidator implements ConstraintValidator<TypeFile, Multipar
    @Override
    public boolean isValid(MultipartFile multipartFile, ConstraintValidatorContext constraintValidatorContext) {
 
-      String contentType = multipartFile.getContentType();
-      assert contentType != null;
-      return isSupportedContentType(contentType);
+      if (multipartFile != null && multipartFile.getSize() > 0){
+         String contentType = multipartFile.getContentType();
+         return isSupportedContentType(contentType);
+      }
+      return true;
    }
 
    private boolean isSupportedContentType(String contentType) {

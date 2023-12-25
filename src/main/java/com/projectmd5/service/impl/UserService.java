@@ -4,6 +4,7 @@ import com.projectmd5.exception.AuthException;
 import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.request.LoginDTO;
 import com.projectmd5.model.dto.request.RegisterDTO;
+import com.projectmd5.model.dto.response.JwtResponse;
 import com.projectmd5.model.dto.response.UserResponse;
 import com.projectmd5.model.entity.Role;
 import com.projectmd5.model.entity.RoleName;
@@ -15,6 +16,10 @@ import com.projectmd5.service.IRoleService;
 import com.projectmd5.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,6 +41,11 @@ public class UserService implements IUserService {
    private final ModelMapper modelMapper;
    private final AuthenticationManager authManager;
    private final JwtTokenBuilder jwtBuilder;
+
+   @Override
+   public List<User> findAll() {
+      return userRepository.findAll();
+   }
 
    @Override
    public Boolean existsByUsername(String username) {
@@ -85,7 +95,7 @@ public class UserService implements IUserService {
    }
 
    @Override
-   public UserResponse login(LoginDTO login) {
+   public JwtResponse login(LoginDTO login) {
       Authentication auth = null;
       try {
          auth = authManager.authenticate(
@@ -100,12 +110,34 @@ public class UserService implements IUserService {
       String accessToken = jwtBuilder.generateAccessToken(userDetail);
       String refreshToken = jwtBuilder.generateRefreshToken(userDetail);
 
-      return UserResponse.builder()
+      return JwtResponse.builder()
             .username(userDetail.getUsername())
             .email(userDetail.getEmail())
             .roles(roles)
             .accessToken(accessToken)
             .refreshToken(refreshToken)
+            .build();
+   }
+
+   @Override
+   public UserResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
+      Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+
+      Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+      Page<User> pages = userRepository.findAll(pageable);
+      List<User> data = pages.getContent();
+
+      List<RegisterDTO> dataDTO = data.stream().map(
+            u -> modelMapper.map(u, RegisterDTO.class)).toList();
+
+      return UserResponse.builder()
+            .users(dataDTO)
+            .pageNo(pageNo)
+            .pageSize(pageSize)
+            .totalElements(pages.getTotalElements())
+            .totalPages(pages.getTotalPages())
+            .last(pages.isLast())
             .build();
    }
 

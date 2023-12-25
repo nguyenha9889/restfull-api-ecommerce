@@ -6,7 +6,6 @@ import com.projectmd5.model.dto.response.ProductResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.repository.IProductRepository;
-import com.projectmd5.service.FilesStorageService;
 import com.projectmd5.service.ICategoryService;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +18,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
 public class ProductService implements IProductService {
    private final ModelMapper modelMapper;
-   private final FilesStorageService storageService;
    private final IProductRepository productRepository;
    private final ICategoryService categoryService;
    @Override
@@ -81,11 +80,11 @@ public class ProductService implements IProductService {
    }
 
    @Override
-   public Product edit(ProductDTO proDTO, Long productId) {
+   public Product edit(Long productId , ProductDTO proDTO) {
       Product product = findById(productId);
       Category category = categoryService.findById(proDTO.getCategoryId());
       product.setCategory(category);
-
+      product.setImagePath(proDTO.getImagePath());
       product.setProductName(proDTO.getProductName());
       product.setDescription(proDTO.getDescription());
       product.setUnitPrice(proDTO.getUnitPrice());
@@ -96,7 +95,12 @@ public class ProductService implements IProductService {
    }
 
    @Override
-   public boolean existByProductName(String name) {
+   public boolean existProductName(Long id, String name) {
+      for (Product p: findAll()) {
+         if (p.getProductName().equalsIgnoreCase(name.trim())) {
+            return !Objects.equals(p.getProductId(), id);
+         }
+      }
       return false;
    }
 }
