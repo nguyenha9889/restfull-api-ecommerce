@@ -1,13 +1,11 @@
 package com.projectmd5.controller.admin;
 
-import com.projectmd5.exception.BadRequestException;
-import com.projectmd5.model.dto.request.CategoryDTO;
-import com.projectmd5.model.dto.response.CategoryResponse;
+import com.projectmd5.model.dto.category.CatPageResponse;
+import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.service.ICategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
 
    private final ICategoryService categoryService;
-   private final ModelMapper modelMapper;
 
    @GetMapping
    public ResponseEntity<?> getList(
@@ -27,49 +24,31 @@ public class CategoryController {
          @RequestParam(value = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
          @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
    ){
-      CategoryResponse response = categoryService.getAll(pageNo, pageSize, sortBy, sortDir);
+      CatPageResponse response = categoryService.getAll(pageNo, pageSize, sortBy, sortDir);
       return ResponseEntity.ok(response);
    }
 
    @GetMapping("/{categoryId}")
    public ResponseEntity<?> getCategory(@PathVariable Long categoryId){
       Category cate = categoryService.findById(categoryId);
-      CategoryDTO cateDTO = modelMapper.map(cate, CategoryDTO.class);
-
-      return ResponseEntity.ok(cateDTO);
+      return ResponseEntity.ok(cate);
    }
    @PostMapping
-   public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDTO cateDTO){
+   public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryRequest cateRequest){
 
-      if (categoryService.existCategoryName(null, cateDTO.getCategoryName())){
-         throw new BadRequestException("Category name is existed!");
-      }
-
-      Category cate = categoryService.create(cateDTO);
-      categoryService.save(cate);
-      CategoryDTO cateDTONew = modelMapper.map(cate, CategoryDTO.class);
-
-      return new ResponseEntity<>(cateDTONew, HttpStatus.CREATED);
+      Category category = categoryService.add(cateRequest);
+      return new ResponseEntity<>(category, HttpStatus.CREATED);
    }
 
    @PutMapping("/{categoryId}")
-   public ResponseEntity<?> updateCategory(@Valid @RequestBody CategoryDTO cateDTO,
-                                           @PathVariable Long categoryId){
-
-      if (categoryService.existCategoryName(categoryId, cateDTO.getCategoryName())){
-         throw new BadRequestException("Category name is existed!");
-      }
-
-      Category cateUpdate = categoryService.edit(cateDTO, categoryId);
-      categoryService.save(cateUpdate);
-
+   public ResponseEntity<?> updateCategory(@PathVariable Long categoryId, @Valid @RequestBody CategoryRequest cateDTO){
+      Category cateUpdate = categoryService.update(categoryId, cateDTO);
       return ResponseEntity.ok(cateUpdate);
    }
 
    @DeleteMapping("/{categoryId}")
    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId){
       categoryService.delete(categoryId);
-
       return ResponseEntity.ok("Category deleted successfully!");
    }
 }

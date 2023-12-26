@@ -1,7 +1,5 @@
-package com.projectmd5.model.dto.response;
+package com.projectmd5.model.dto.user;
 
-
-import com.projectmd5.model.dto.request.CategoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryResponse {
-   private List<CategoryDTO> data;
+public class UserPageResponse {
+   List<BaseUserResponse> users;
    private int pageNo;
    private int pageSize;
    private long totalElements;

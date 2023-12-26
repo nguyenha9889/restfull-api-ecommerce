@@ -1,4 +1,4 @@
-package com.projectmd5.model.dto.request;
+package com.projectmd5.model.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projectmd5.validation.EmailUnique;
@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
 
 @Getter
 @AllArgsConstructor
@@ -21,7 +20,7 @@ import java.util.Set;
       confirmPassword = "confirmPassword"
 )
 @Builder
-public class RegisterDTO {
+public class RegisterRequest {
    @NotBlank(message = "Full name can not be blank")
    private String fullName;
 
@@ -49,11 +48,6 @@ public class RegisterDTO {
    @NotBlank(message = "ConfirmPassword can not be blank")
    private String confirmPassword;
 
-   @NotBlank(message = "Address can not be blank")
-   private String address;
-
-   private Set<String> roles;
-
    public void setFullName(String fullName) {
       this.fullName = fullName;
    }
@@ -76,13 +70,5 @@ public class RegisterDTO {
 
    public void setConfirmPassword(String confirmPassword) {
       this.confirmPassword = confirmPassword;
-   }
-
-   public void setAddress(String address) {
-      this.address = address;
-   }
-
-   public void setRoles(Set<String> roles) {
-      this.roles = roles;
    }
 }

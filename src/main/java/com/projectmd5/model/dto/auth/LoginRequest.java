@@ -1,4 +1,4 @@
-package com.projectmd5.model.dto.request;
+package com.projectmd5.model.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginDTO {
+public class LoginRequest {
    @NotBlank(message = "User name can not be blank")
    private String username;
    @NotBlank(message = "Password can not be blank")

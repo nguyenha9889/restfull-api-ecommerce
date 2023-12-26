@@ -8,6 +8,8 @@ import com.projectmd5.service.IRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RoleService implements IRoleService {
@@ -17,6 +19,18 @@ public class RoleService implements IRoleService {
    public Role findByRoleName(RoleName roleName) {
       return roleRepository.findByRoleName(roleName).orElseThrow(
             () -> new ResourceNotFoundException("Role not found with role name " + roleName)
+      );
+   }
+
+   @Override
+   public List<Role> findAll() {
+      return roleRepository.findAll();
+   }
+
+   @Override
+   public Role findById(Long id) {
+      return roleRepository.findById(id).orElseThrow(
+            () -> new ResourceNotFoundException("Role not found with roleId " + id)
       );
    }
 }

@@ -1,8 +1,9 @@
 package com.projectmd5.controller.admin;
 
 import com.projectmd5.exception.BadRequestException;
-import com.projectmd5.model.dto.request.ProductDTO;
-import com.projectmd5.model.dto.response.ProductResponse;
+import com.projectmd5.model.dto.product.BaseProductResponse;
+import com.projectmd5.model.dto.product.ProductRequest;
+import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.service.FilesStorageService;
 import com.projectmd5.service.IProductService;
@@ -33,51 +34,34 @@ public class ProductController {
          @RequestParam(value = "sortBy", defaultValue = "productId", required = false) String sortBy,
          @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
    ){
-      ProductResponse response = productService.getAll(pageNo, pageSize, sortBy, sortDir);
+      ProPageResponse response = productService.getAll(pageNo, pageSize, sortBy, sortDir);
       return ResponseEntity.ok(response);
    }
 
    @GetMapping("/{productId}")
-   public ResponseEntity<?> getCategory(@PathVariable Long productId){
+   public ResponseEntity<?> getProduct(@PathVariable Long productId){
       Product pro = productService.findById(productId);
       return ResponseEntity.ok(pro);
    }
    @PostMapping
-   public ResponseEntity<?> addCategory(@Valid @RequestBody ProductDTO proDTO){
-
-      if (productService.existProductName(null, proDTO.getProductName())){
+   public ResponseEntity<?> addProduct(@Valid @RequestBody ProductRequest proRequest) {
+      if (productService.existProductName(null, proRequest.getProductName())) {
          throw new BadRequestException("Product name is existed!");
       }
-      if (proDTO.getImage() == null || proDTO.getImage().isEmpty()){
-         throw new MultipartException("Upload one image with size less than 1MB");
-      }
-      String imagePath = storageService.uploadFile(proDTO.getImage());
 
-      //String imagePath = proDTO.getImagePath();
-      Product pro = productService.create(proDTO);
-      pro.setImagePath(imagePath);
-      pro.setSku(UUID.randomUUID().toString());
-      productService.save(pro);
-
-      ProductDTO productDTO = modelMapper.map(pro, ProductDTO.class);
-      return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+      BaseProductResponse response = productService.add(proRequest);
+      return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
 
    @PutMapping("/{productId}")
-   public ResponseEntity<?> updateCategory(@PathVariable Long productId,
-                                           @Valid @RequestBody ProductDTO proDTO){
+   public ResponseEntity<?> updateCategory(@PathVariable Long productId, @Valid @RequestBody ProductRequest proRequest){
 
-      if (productService.existProductName(productId, proDTO.getProductName())){
+      if (productService.existProductName(productId, proRequest.getProductName())){
          throw new BadRequestException("Product name is existed!");
       }
-      Product pro = productService.edit(productId, proDTO);
-      if (proDTO.getImage() != null && proDTO.getImage().getSize() > 0){
-         pro.setImagePath(storageService.uploadFile(proDTO.getImage()));
-      }
 
-      productService.save(pro);
-      ProductDTO productDTO = modelMapper.map(pro, ProductDTO.class);
-      return ResponseEntity.ok(productDTO);
+      BaseProductResponse response = productService.update(productId,proRequest);
+      return ResponseEntity.ok(response);
    }
 
    @DeleteMapping("/{productId}")
@@ -92,7 +76,7 @@ public class ProductController {
          throw new MultipartException("pls upload file");
       }
       String image = storageService.uploadFile(file);
-      ProductDTO dto = new ProductDTO();
+      ProductRequest dto = new ProductRequest();
       dto.setProductName("Test upload");
       dto.setImagePath(image);
       return ResponseEntity.ok().body(dto);

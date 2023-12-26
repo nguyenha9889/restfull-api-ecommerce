@@ -1,6 +1,5 @@
-package com.projectmd5.model.dto.response;
+package com.projectmd5.model.dto.product;
 
-import com.projectmd5.model.dto.request.RegisterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponse {
-   private List<RegisterDTO> users;
+public class ProPageResponse {
+   List<ProductResponse> products;
    private int pageNo;
    private int pageSize;
    private long totalElements;

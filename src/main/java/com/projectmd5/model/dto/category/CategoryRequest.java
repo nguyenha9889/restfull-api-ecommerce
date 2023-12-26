@@ -1,4 +1,4 @@
-package com.projectmd5.model.dto.request;
+package com.projectmd5.model.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDTO {
+public class CategoryRequest {
    private Long categoryId;
 
    @NotBlank(message = "Category name is not blank")

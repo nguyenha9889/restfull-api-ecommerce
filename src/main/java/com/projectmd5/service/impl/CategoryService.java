@@ -1,8 +1,8 @@
 package com.projectmd5.service.impl;
 
 import com.projectmd5.exception.ResourceNotFoundException;
-import com.projectmd5.model.dto.request.CategoryDTO;
-import com.projectmd5.model.dto.response.CategoryResponse;
+import com.projectmd5.model.dto.category.CategoryRequest;
+import com.projectmd5.model.dto.category.CatPageResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.repository.ICategoryRepository;
 import com.projectmd5.service.ICategoryService;
@@ -36,7 +36,7 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public CategoryResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
+   public CatPageResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
       Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
 
@@ -44,11 +44,8 @@ public class CategoryService implements ICategoryService {
       Page<Category> pages = categoryRepository.findAll(pageable);
       List<Category> data = pages.getContent();
 
-      List<CategoryDTO> dataDTO = data.stream().map(
-            cate -> modelMapper.map(cate, CategoryDTO.class)).toList();
-
-      return CategoryResponse.builder()
-            .data(dataDTO)
+      return CatPageResponse.builder()
+            .data(data)
             .pageNo(pageNo)
             .pageSize(pageSize)
             .totalElements(pages.getTotalElements())
@@ -68,24 +65,23 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public Category create(CategoryDTO categoryDTO) {
-      if (categoryDTO.getStatus() == null){
-         categoryDTO.setStatus(true);
-      }
-
-      return modelMapper.map(categoryDTO, Category.class);
+   public Category add(CategoryRequest categoryRequest) {
+      Category category = modelMapper.map(categoryRequest, Category.class);
+      category.setStatus(true);
+      categoryRepository.save(category);
+      return category;
    }
 
    @Override
-   public Category edit(CategoryDTO categoryDTO, Long categoryId) {
+   public Category update(Long categoryId, CategoryRequest categoryRequest) {
       Category cate = findById(categoryId);
-      cate.setCategoryName(categoryDTO.getCategoryName());
-      cate.setDescription(categoryDTO.getDescription());
+      cate.setCategoryName(categoryRequest.getCategoryName());
+      cate.setDescription(categoryRequest.getDescription());
 
-      if (categoryDTO.getStatus() != null){
-         cate.setStatus(categoryDTO.getStatus());
+      if (categoryRequest.getStatus() != null){
+         cate.setStatus(categoryRequest.getStatus());
       }
-
+      categoryRepository.save(cate);
       return cate;
    }
 

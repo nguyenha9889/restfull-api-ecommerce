@@ -1,11 +1,14 @@
 package com.projectmd5.service.impl;
 
 import com.projectmd5.exception.ResourceNotFoundException;
-import com.projectmd5.model.dto.request.ProductDTO;
-import com.projectmd5.model.dto.response.ProductResponse;
+import com.projectmd5.model.dto.product.BaseProductResponse;
+import com.projectmd5.model.dto.product.ProPageResponse;
+import com.projectmd5.model.dto.product.ProductRequest;
+import com.projectmd5.model.dto.product.ProductResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.repository.IProductRepository;
+import com.projectmd5.service.FilesStorageService;
 import com.projectmd5.service.ICategoryService;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +18,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartException;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -26,6 +31,7 @@ public class ProductService implements IProductService {
    private final ModelMapper modelMapper;
    private final IProductRepository productRepository;
    private final ICategoryService categoryService;
+   private final FilesStorageService storageService;
    @Override
    public List<Product> findAll() {
       return productRepository.findAll();
@@ -50,7 +56,7 @@ public class ProductService implements IProductService {
    }
 
    @Override
-   public ProductResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
+   public ProPageResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
       Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
 
@@ -58,11 +64,11 @@ public class ProductService implements IProductService {
       Page<Product> pages = productRepository.findAll(pageable);
       List<Product> data = pages.getContent();
 
-      List<ProductDTO> dataDTO = data.stream().map(
-            p -> modelMapper.map(p, ProductDTO.class)).toList();
+      List<ProductResponse> dataResponse = data.stream().map(
+            p -> modelMapper.map(p, ProductResponse.class)).toList();
 
-      return ProductResponse.builder()
-            .products(dataDTO)
+      return ProPageResponse.builder()
+            .products(dataResponse)
             .pageNo(pageNo)
             .pageSize(pageSize)
             .totalElements(pages.getTotalElements())
@@ -72,26 +78,40 @@ public class ProductService implements IProductService {
    }
 
    @Override
-   public Product create(ProductDTO proDTO) {
-      proDTO.setCreatedAt(new Date());
-      proDTO.setUpdatedAt(null);
+   public BaseProductResponse add(ProductRequest proRequest) {
+      if (proRequest.getImage() == null || proRequest.getImage().isEmpty()) {
+         throw new MultipartException("Upload one image with size less than 1MB");
+      }
+      String imagePath = storageService.uploadFile((proRequest.getImage()));
 
-      return modelMapper.map(proDTO, Product.class);
+      Product product = modelMapper.map(proRequest, Product.class);
+      product.setImagePath(imagePath);
+      product.setSku(UUID.randomUUID().toString());
+      product.setCreatedAt(new Date());
+
+      productRepository.save(product);
+      return modelMapper.map(product, BaseProductResponse.class);
    }
 
    @Override
-   public Product edit(Long productId , ProductDTO proDTO) {
+   public BaseProductResponse update(Long productId , ProductRequest proRequest) {
       Product product = findById(productId);
-      Category category = categoryService.findById(proDTO.getCategoryId());
+      Category category = categoryService.findById(proRequest.getCategoryId());
       product.setCategory(category);
-      product.setImagePath(proDTO.getImagePath());
-      product.setProductName(proDTO.getProductName());
-      product.setDescription(proDTO.getDescription());
-      product.setUnitPrice(proDTO.getUnitPrice());
-      product.setQuantity(proDTO.getQuantity());
+      if (proRequest.getImage() != null && proRequest.getImage().getSize() > 0){
+         product.setImagePath(storageService.uploadFile(proRequest.getImage()));
+      } else {
+         product.setImagePath(proRequest.getImagePath());
+      }
+
+      product.setProductName(proRequest.getProductName());
+      product.setDescription(proRequest.getDescription());
+      product.setUnitPrice(proRequest.getUnitPrice());
+      product.setQuantity(proRequest.getQuantity());
       product.setUpdatedAt(new Date());
 
-      return product;
+      productRepository.save(product);
+      return modelMapper.map(product, BaseProductResponse.class);
    }
 
    @Override

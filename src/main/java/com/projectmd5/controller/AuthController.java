@@ -1,10 +1,9 @@
 package com.projectmd5.controller;
 
-import com.projectmd5.model.dto.request.LoginDTO;
-import com.projectmd5.model.dto.request.RegisterDTO;
-import com.projectmd5.model.dto.response.JwtResponse;
-import com.projectmd5.model.entity.User;
-import com.projectmd5.service.IUserService;
+import com.projectmd5.model.dto.auth.JwtResponse;
+import com.projectmd5.model.dto.auth.LoginRequest;
+import com.projectmd5.model.dto.auth.RegisterRequest;
+import com.projectmd5.service.IAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,20 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api.myservice.com/v1/auth")
 public class AuthController {
-
-   private final IUserService userService;
+   private final IAuthService authService;
 
    @PostMapping("/sign-up")
-   public ResponseEntity<?> signUp(@Valid @RequestBody RegisterDTO register) {
+   public ResponseEntity<?> signUp(@Valid @RequestBody RegisterRequest register) {
 
-      User user = userService.create(register);
-      userService.save(user);
-      return new ResponseEntity<>("Register successfully!", HttpStatus.CREATED);
+      return new ResponseEntity<>(authService.register(register), HttpStatus.CREATED);
    }
 
    @PostMapping("/sign-in")
-   public ResponseEntity<?> signIn(@Valid @RequestBody LoginDTO login) {
-      JwtResponse jwtResponse = userService.login(login);
+   public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest login) {
+      JwtResponse jwtResponse = authService.login(login);
       return ResponseEntity.ok(jwtResponse);
    }
 }

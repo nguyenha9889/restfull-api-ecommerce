@@ -1,4 +1,4 @@
-package com.projectmd5.model.dto.request;
+package com.projectmd5.model.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projectmd5.validation.TypeFile;
@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class ProductRequest {
    private Long productId;
 
    @NotBlank(message = "Product name is not blank")
@@ -30,14 +29,11 @@ public class ProductDTO {
    private BigDecimal unitPrice;
    @PositiveOrZero(message = "Quantity must be equal or larger than 0")
    private int quantity;
+   @JsonIgnore
 
    @TypeFile
-   @JsonIgnore
    private MultipartFile image;
    private String imagePath;
-
-   private Date createdAt;
-   private Date updatedAt;
 
    public void setProductId(Long productId) {
       this.productId = productId;
@@ -73,13 +69,5 @@ public class ProductDTO {
 
    public void setImagePath(String imagePath) {
       this.imagePath = imagePath;
-   }
-
-   public void setCreatedAt(Date createdAt) {
-      this.createdAt = createdAt;
-   }
-
-   public void setUpdatedAt(Date updatedAt) {
-      this.updatedAt = updatedAt;
    }
 }

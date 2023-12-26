@@ -5,7 +5,7 @@ import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
 @Constraint(validatedBy = TypeFileValidator.class)
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface TypeFile {

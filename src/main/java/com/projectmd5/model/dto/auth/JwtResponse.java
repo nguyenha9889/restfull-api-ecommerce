@@ -1,5 +1,6 @@
-package com.projectmd5.model.dto.response;
+package com.projectmd5.model.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class JwtResponse {
+   @JsonIgnore
    private Long userId;
    private String username;
    private String email;
