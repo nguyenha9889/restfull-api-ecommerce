@@ -54,7 +54,7 @@ public class ProductController {
    }
 
    @PutMapping("/{productId}")
-   public ResponseEntity<?> updateCategory(@PathVariable Long productId, @Valid @RequestBody ProductRequest proRequest){
+   public ResponseEntity<?> updateProduct(@PathVariable Long productId, @Valid @RequestBody ProductRequest proRequest){
 
       if (productService.existProductName(productId, proRequest.getProductName())){
          throw new BadRequestException("Product name is existed!");
@@ -68,17 +68,5 @@ public class ProductController {
    public ResponseEntity<?> deleteCategory(@PathVariable Long productId){
       productService.delete(productId);
       return ResponseEntity.ok("Product deleted successfully!");
-   }
-
-   @PostMapping("/upload")
-   public ResponseEntity<?> upload(@RequestParam MultipartFile file){
-      if (file == null || file.isEmpty()){
-         throw new MultipartException("pls upload file");
-      }
-      String image = storageService.uploadFile(file);
-      ProductRequest dto = new ProductRequest();
-      dto.setProductName("Test upload");
-      dto.setImagePath(image);
-      return ResponseEntity.ok().body(dto);
    }
 }
