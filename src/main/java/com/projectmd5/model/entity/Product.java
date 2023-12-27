@@ -1,5 +1,6 @@
 package com.projectmd5.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,12 +54,13 @@ public class Product {
    @Temporal(TemporalType.DATE)
    private Date updatedAt;
 
+   @JsonIgnore
    @OneToMany(mappedBy = "product")
    private List<WishList> wishLists;
-
+   @JsonIgnore
    @OneToMany(mappedBy = "product")
    private List<Cart> carts;
-
+   @JsonIgnore
    @OneToMany(mappedBy = "product")
    private List<OrderDetail> orderDetails;
 }

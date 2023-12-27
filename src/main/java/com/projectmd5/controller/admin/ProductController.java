@@ -30,7 +30,7 @@ public class ProductController {
          @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
    ){
       Pageable pageable = productService.getPageable(pageNo, pageSize, sortBy, sortDir);
-      ProPageResponse response = productService.getAll(pageable);
+      ProPageResponse response = productService.getAllWithPaging(pageable);
       return ResponseEntity.ok(response);
    }
 

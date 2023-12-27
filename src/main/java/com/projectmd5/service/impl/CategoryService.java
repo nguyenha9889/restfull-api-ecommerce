@@ -30,7 +30,7 @@ public class CategoryService implements ICategoryService {
 
    @Override
    public List<Category> findByStatusTrue(){
-      return categoryRepository.findByStatusIsTrue();
+      return categoryRepository.findAllByStatusIsTrue();
    }
 
    @Override

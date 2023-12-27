@@ -1,5 +1,6 @@
 package com.projectmd5.model.dto.product;
 
+import com.projectmd5.model.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ProPageResponse {
-   List<ProductResponse> products;
+   List<Product> products;
    private int pageNo;
    private int pageSize;
    private long totalElements;

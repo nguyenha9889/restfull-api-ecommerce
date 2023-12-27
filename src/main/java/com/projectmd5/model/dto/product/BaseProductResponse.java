@@ -16,7 +16,7 @@ public class BaseProductResponse {
    private String size;
    private String dough;
    private String description;
-   private Category category;
+   private Long categoryId;
    private BigDecimal unitPrice;
    private String imagePath;
 }
