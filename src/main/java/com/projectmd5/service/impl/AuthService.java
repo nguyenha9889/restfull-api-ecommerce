@@ -22,7 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -65,7 +67,9 @@ public class AuthService implements IAuthService {
       user.setStatus(true);
       user.setPassword(passwordEncoder.encode(register.getPassword()));
       Role userRole = roleService.findByRoleName(RoleName.ROLE_USER);
-      user.getRoles().add(userRole);
+      Set<Role> roles = new HashSet<>();
+      roles.add(userRole);
+      user.setRoles(roles);
       user.setCreatedAt(new Date());
 
       userRepository.save(user);

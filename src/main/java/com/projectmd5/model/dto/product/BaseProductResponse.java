@@ -1,5 +1,6 @@
 package com.projectmd5.model.dto.product;
 
+import com.projectmd5.model.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,9 +13,10 @@ public class BaseProductResponse {
    private Long productId;
    private String productName;
    private String sku;
+   private String size;
+   private String dough;
    private String description;
-   private Long categoryId;
+   private Category category;
    private BigDecimal unitPrice;
-   private int quantity;
    private String imagePath;
 }

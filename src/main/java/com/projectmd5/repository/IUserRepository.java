@@ -1,7 +1,10 @@
 package com.projectmd5.repository;
 
 import com.projectmd5.model.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,5 +17,6 @@ public interface IUserRepository extends JpaRepository<User, Long> {
    Boolean existsByUsernameEqualsIgnoreCase(String username);
    Boolean existsByEmailEqualsIgnoreCase(String email);
    Boolean existsByPhone(String phone);
-   List<User> findByFullNameContainingIgnoreCase(String name);
+   @Query("select u from User u where lower(u.fullName) like lower(concat('%',?1,'%'))")
+   Page<User> findByNameWithPagination(String name, Pageable pageable);
 }

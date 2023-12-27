@@ -1,8 +1,9 @@
 package com.projectmd5.model.dto.product;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projectmd5.validation.TypeFile;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class ProductRequest {
    private String productName;
 
    private String sku;
+   private String size;
+   private String dough;
 
    @NotBlank(message = "Description is not blank")
    private String description;
@@ -27,9 +30,6 @@ public class ProductRequest {
    private Long categoryId;
    @Positive(message = "Unit price must be larger than 0")
    private BigDecimal unitPrice;
-   @PositiveOrZero(message = "Quantity must be equal or larger than 0")
-   private int quantity;
-   @JsonIgnore
 
    @TypeFile
    private MultipartFile image;
@@ -57,10 +57,6 @@ public class ProductRequest {
 
    public void setUnitPrice(BigDecimal unitPrice) {
       this.unitPrice = unitPrice;
-   }
-
-   public void setQuantity(int quantity) {
-      this.quantity = quantity;
    }
 
    public void setImage(MultipartFile image) {

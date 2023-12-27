@@ -30,6 +30,12 @@ public class Product {
    @GeneratedValue(strategy = GenerationType.UUID)
    private String sku = UUID.randomUUID().toString();
 
+   @Column(length = 100)
+   private String size;
+
+   @Column(length = 100)
+   private String dough;
+
    @Column(columnDefinition = "text")
    private String description;
 
@@ -39,7 +45,7 @@ public class Product {
 
    @Column(precision=10, scale=2)
    private BigDecimal unitPrice;
-   private int quantity;
+
    private String imagePath;
 
    @Temporal(TemporalType.DATE)

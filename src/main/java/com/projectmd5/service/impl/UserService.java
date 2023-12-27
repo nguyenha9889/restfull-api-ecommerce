@@ -1,8 +1,8 @@
 package com.projectmd5.service.impl;
 
 import com.projectmd5.exception.ResourceNotFoundException;
-import com.projectmd5.model.dto.user.BaseUserResponse;
 import com.projectmd5.model.dto.user.UserPageResponse;
+import com.projectmd5.model.dto.user.UserResponse;
 import com.projectmd5.model.entity.User;
 import com.projectmd5.repository.IUserRepository;
 import com.projectmd5.service.IUserService;
@@ -45,21 +45,24 @@ public class UserService implements IUserService {
    }
 
    @Override
-   public UserPageResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
+   public Pageable getPageable(int pageNo, int pageSize, String sortBy, String sortDir){
       Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
+      return PageRequest.of(pageNo, pageSize, sort);
+   }
 
-      Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+   @Override
+   public UserPageResponse getAll(Pageable pageable) {
       Page<User> pages = userRepository.findAll(pageable);
       List<User> data = pages.getContent();
 
-      List<BaseUserResponse> dataDTO = data.stream().map(
-            u -> modelMapper.map(u, BaseUserResponse.class)).toList();
+      List<UserResponse> dataDTO = data.stream().map(
+            u -> modelMapper.map(u, UserResponse.class)).toList();
 
       return UserPageResponse.builder()
             .users(dataDTO)
-            .pageNo(pageNo)
-            .pageSize(pageSize)
+            .pageNo(pageable.getPageNumber())
+            .pageSize(pageable.getPageSize())
             .totalElements(pages.getTotalElements())
             .totalPages(pages.getTotalPages())
             .last(pages.isLast())
@@ -71,6 +74,24 @@ public class UserService implements IUserService {
       return userRepository.findByUserId(userId).orElseThrow(
             () -> new ResourceNotFoundException("User not found with id " + userId)
       );
+   }
+
+   @Override
+   public UserPageResponse findByName(String name, Pageable pageable){
+      Page<User> pages = userRepository.findByNameWithPagination(name.trim(), pageable);
+      List<User> data = pages.getContent();
+
+      List<UserResponse> dataDTO = data.stream().map(
+            u -> modelMapper.map(u, UserResponse.class)).toList();
+
+      return UserPageResponse.builder()
+            .users(dataDTO)
+            .pageNo(pageable.getPageNumber())
+            .pageSize(pageable.getPageSize())
+            .totalElements(pages.getTotalElements())
+            .totalPages(pages.getTotalPages())
+            .last(pages.isLast())
+            .build();
    }
 
    @Override

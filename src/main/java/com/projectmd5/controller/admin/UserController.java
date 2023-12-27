@@ -8,6 +8,7 @@ import com.projectmd5.service.IRoleService;
 import com.projectmd5.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,8 @@ public class UserController {
          @RequestParam(value = "sortBy", defaultValue = "userId", required = false) String sortBy,
          @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir){
 
-      UserPageResponse response = userService.getAll(pageNo, pageSize, sortBy, sortDir);
+      Pageable pageable = userService.getPageable(pageNo, pageSize, sortBy, sortDir);
+      UserPageResponse response = userService.getAll(pageable);
       return ResponseEntity.ok(response);
    }
 
@@ -55,7 +57,7 @@ public class UserController {
    }
 
    @PostMapping("/{userId}/role")
-   public ResponseEntity<?> addRole(@PathVariable Long userId, @RequestBody Long roleId){
+   public ResponseEntity<?> addRoleToUser(@PathVariable Long userId, @RequestBody Long roleId){
       User user = userService.findById(userId);
       if (!user.isStatus()){
          return new ResponseEntity<>(
@@ -76,7 +78,7 @@ public class UserController {
    }
 
    @DeleteMapping("/{userId}/role")
-   public ResponseEntity<?> deleteRole(@PathVariable Long userId, @RequestBody Long roleId){
+   public ResponseEntity<?> deleteRoleOfUser(@PathVariable Long userId, @RequestBody Long roleId){
       User user = userService.findById(userId);
       Role role = roleService.findById(roleId);
       if (user.getRoles().stream().noneMatch(r -> Objects.equals(r.getId(), roleId))) {
@@ -89,5 +91,13 @@ public class UserController {
       user.setUpdatedAt(new Date());
       userService.save(user);
       return ResponseEntity.ok().body("Delete user's role successfully");
+   }
+
+   @GetMapping("/users/search")
+   public ResponseEntity<?> search(@RequestParam(name = "fullName", required = false) String name){
+
+      Pageable pageable = userService.getPageable(0, 5, "userId", "asc");
+      UserPageResponse response = userService.findByName(name, pageable);
+      return ResponseEntity.ok(response);
    }
 }

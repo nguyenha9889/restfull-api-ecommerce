@@ -15,7 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,11 @@ public class CategoryService implements ICategoryService {
    @Override
    public List<Category> findAll() {
       return categoryRepository.findAll();
+   }
+
+   @Override
+   public List<Category> findByStatusTrue(){
+      return categoryRepository.findByStatusIsTrue();
    }
 
    @Override
@@ -83,15 +88,5 @@ public class CategoryService implements ICategoryService {
       }
       categoryRepository.save(cate);
       return cate;
-   }
-
-   @Override
-   public boolean existCategoryName(Long id, String name) {
-      for (Category c: findAll()) {
-         if (c.getCategoryName().equalsIgnoreCase(name.trim())) {
-            return !Objects.equals(c.getCategoryId(), id);
-         }
-      }
-      return false;
    }
 }

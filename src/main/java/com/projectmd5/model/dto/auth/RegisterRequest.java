@@ -1,11 +1,12 @@
 package com.projectmd5.model.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projectmd5.validation.EmailUnique;
 import com.projectmd5.validation.PasswordMatching;
 import com.projectmd5.validation.PhoneUnique;
 import com.projectmd5.validation.UserNameUnique;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,12 +40,10 @@ public class RegisterRequest {
    @PhoneUnique
    private String phone;
 
-   @JsonIgnore
    @NotBlank(message = "Password can not be blank")
    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z]).{8,}$", message = "Password must be 8 characters long and combination of lowercase letters, numbers")
    private String password;
 
-   @JsonIgnore
    @NotBlank(message = "ConfirmPassword can not be blank")
    private String confirmPassword;
 

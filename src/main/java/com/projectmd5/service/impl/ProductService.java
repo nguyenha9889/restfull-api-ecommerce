@@ -1,5 +1,6 @@
 package com.projectmd5.service.impl;
 
+import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.product.BaseProductResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
@@ -56,11 +57,16 @@ public class ProductService implements IProductService {
    }
 
    @Override
-   public ProPageResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
+   public Pageable getPageable(int pageNo, int pageSize, String sortBy, String sortDir){
       Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
 
-      Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+      return PageRequest.of(pageNo, pageSize, sort);
+   }
+
+   @Override
+   public ProPageResponse getAll(Pageable pageable) {
+
       Page<Product> pages = productRepository.findAll(pageable);
       List<Product> data = pages.getContent();
 
@@ -69,8 +75,8 @@ public class ProductService implements IProductService {
 
       return ProPageResponse.builder()
             .products(dataResponse)
-            .pageNo(pageNo)
-            .pageSize(pageSize)
+            .pageNo(pageable.getPageNumber())
+            .pageSize(pageable.getPageSize())
             .totalElements(pages.getTotalElements())
             .totalPages(pages.getTotalPages())
             .last(pages.isLast())
@@ -85,6 +91,7 @@ public class ProductService implements IProductService {
       String imagePath = storageService.uploadFile((proRequest.getImage()));
 
       Product product = modelMapper.map(proRequest, Product.class);
+      //product.setImagePath(product.getImagePath());
       product.setImagePath(imagePath);
       product.setSku(UUID.randomUUID().toString());
       product.setCreatedAt(new Date());
@@ -96,22 +103,27 @@ public class ProductService implements IProductService {
    @Override
    public BaseProductResponse update(Long productId , ProductRequest proRequest) {
       Product product = findById(productId);
-      Category category = categoryService.findById(proRequest.getCategoryId());
-      product.setCategory(category);
-      if (proRequest.getImage() != null && proRequest.getImage().getSize() > 0){
-         product.setImagePath(storageService.uploadFile(proRequest.getImage()));
-      } else {
-         product.setImagePath(proRequest.getImagePath());
+
+      if (existProductName(productId, proRequest.getProductName())){
+         throw new BadRequestException("Product name is existed!");
       }
 
-      product.setProductName(proRequest.getProductName());
-      product.setDescription(proRequest.getDescription());
-      product.setUnitPrice(proRequest.getUnitPrice());
-      product.setQuantity(proRequest.getQuantity());
-      product.setUpdatedAt(new Date());
+      Product proUpdate = modelMapper.map(proRequest, Product.class);
+      proUpdate.setProductId(productId);
 
-      productRepository.save(product);
-      return modelMapper.map(product, BaseProductResponse.class);
+      Category category = categoryService.findById(proRequest.getCategoryId());
+      proUpdate.setCategory(category);
+
+      if (proRequest.getImage() != null && proRequest.getImage().getSize() > 0){
+         proUpdate.setImagePath(storageService.uploadFile(proRequest.getImage()));
+      } else {
+         proUpdate.setImagePath(proRequest.getImagePath());
+      }
+      proUpdate.setCreatedAt(product.getCreatedAt());
+      proUpdate.setUpdatedAt(new Date());
+
+      productRepository.save(proUpdate);
+      return modelMapper.map(proUpdate, BaseProductResponse.class);
    }
 
    @Override
