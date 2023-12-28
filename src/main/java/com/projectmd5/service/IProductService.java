@@ -12,11 +12,13 @@ import java.util.List;
 public interface IProductService extends IGenericService<Product, Long>{
    Pageable getPageable(int pageNo, int pageSize, String sortBy, String sortDir);
    ProPageResponse getAllWithPaging(Pageable pageable);
-   ProPageResponse getAllPublishWithPaging(Pageable pageable);
    BaseProductResponse add(ProductRequest proRequest);
    BaseProductResponse update(Long productId, ProductRequest proRequest);
    boolean existProductName(Long id, String name);
+
+   ProPageResponse getAllPublishWithPaging(Pageable pageable);
+   List<Product> getAllPublish();
    List<Product> findByNameOrDescription(String name, String description);
-   List<Product> getAllNewCreated();
+   List<Product> getCreatedList();
    List<Product> getAllByCategoryId(Long categoryId);
 }

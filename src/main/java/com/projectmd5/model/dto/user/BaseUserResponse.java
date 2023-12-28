@@ -1,6 +1,7 @@
 package com.projectmd5.model.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.projectmd5.model.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,5 @@ public class BaseUserResponse {
    private String email;
    private String phone;
    private boolean status;
-   private Set<String> roles;
+   private Set<Role> roles;
 }

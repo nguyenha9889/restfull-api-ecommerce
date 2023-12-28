@@ -23,25 +23,9 @@ public class UserService implements IUserService {
    private final IUserRepository userRepository;
    private final ModelMapper modelMapper;
 
-
    @Override
    public List<User> findAll() {
       return userRepository.findAll();
-   }
-
-   @Override
-   public Boolean existsByUsername(String username) {
-      return userRepository.existsByUsernameEqualsIgnoreCase(username.trim());
-   }
-
-   @Override
-   public Boolean existsByEmail(String email) {
-      return userRepository.existsByEmailEqualsIgnoreCase(email.trim());
-   }
-
-   @Override
-   public Boolean existsByPhone(String phone) {
-      return userRepository.existsByPhone(phone.trim());
    }
 
    @Override
@@ -77,7 +61,7 @@ public class UserService implements IUserService {
    }
 
    @Override
-   public UserPageResponse findByName(String name, Pageable pageable){
+   public UserPageResponse findByNameWithPaging(String name, Pageable pageable){
       Page<User> pages = userRepository.findByNameWithPagination(name.trim(), pageable);
       List<User> data = pages.getContent();
 

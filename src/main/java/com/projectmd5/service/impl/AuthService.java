@@ -1,6 +1,7 @@
 package com.projectmd5.service.impl;
 
 import com.projectmd5.exception.AuthException;
+import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.model.dto.auth.JwtResponse;
 import com.projectmd5.model.dto.auth.LoginRequest;
 import com.projectmd5.model.dto.auth.RegisterRequest;
@@ -21,10 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +45,11 @@ public class AuthService implements IAuthService {
          throw new AuthException("Username or Password is incorrect") ;
       }
       UserDetailCustom userDetail = (UserDetailCustom) auth.getPrincipal();
+
+      // check account locked or enable
+      if (!userDetail.isAccountNonLocked()){
+         throw new BadRequestException("Account is Locked");
+      }
       List<String> roles = userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
       String accessToken = jwtBuilder.generateAccessToken(userDetail);
@@ -74,5 +77,35 @@ public class AuthService implements IAuthService {
 
       userRepository.save(user);
       return "Register successfully";
+   }
+
+   @Override
+   public boolean existsByUsername(Long userId, String username) {
+      for (User u: userRepository.findAll()) {
+         if (u.getEmail().equalsIgnoreCase(username.toLowerCase().trim())) {
+            return !Objects.equals(u.getUserId(), userId);
+         }
+      }
+      return false;
+   }
+
+   @Override
+   public boolean existsByEmail(Long userId, String email) {
+      for (User u: userRepository.findAll()) {
+         if (u.getEmail().equalsIgnoreCase(email.toLowerCase().trim())) {
+            return !Objects.equals(u.getUserId(), userId);
+         }
+      }
+      return false;
+   }
+
+   @Override
+   public boolean existsByPhone(Long userId, String phone) {
+      for (User u: userRepository.findAll()) {
+         if (u.getEmail().equalsIgnoreCase(phone.trim())) {
+            return !Objects.equals(u.getUserId(), userId);
+         }
+      }
+      return false;
    }
 }

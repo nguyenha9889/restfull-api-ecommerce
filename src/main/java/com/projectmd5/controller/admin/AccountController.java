@@ -1,7 +1,7 @@
 package com.projectmd5.controller.admin;
 
-import com.projectmd5.model.dto.user.UserPageResponse;
 import com.projectmd5.model.dto.user.BaseUserResponse;
+import com.projectmd5.model.dto.user.UserPageResponse;
 import com.projectmd5.model.entity.Role;
 import com.projectmd5.model.entity.User;
 import com.projectmd5.service.IRoleService;
@@ -20,7 +20,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api.myservice.com/v1/admin")
-public class UserController {
+public class AccountController {
 
    private final ModelMapper modelMapper;
    private final IUserService userService;
@@ -44,7 +44,7 @@ public class UserController {
    }
 
    @PutMapping("/users/{userId}")
-   public ResponseEntity<?> doActiveOrBlock(@PathVariable Long userId, @RequestBody Boolean status){
+   public ResponseEntity<?> lockOrEnableAccount(@PathVariable Long userId, @RequestBody Boolean status){
       User user = userService.findById(userId);
       user.setStatus(status);
       user.setCreatedAt(new Date());
@@ -97,7 +97,7 @@ public class UserController {
    public ResponseEntity<?> search(@RequestParam(name = "fullName", required = false) String name){
 
       Pageable pageable = userService.getPageable(0, 5, "userId", "asc");
-      UserPageResponse response = userService.findByName(name, pageable);
+      UserPageResponse response = userService.findByNameWithPaging(name, pageable);
       return ResponseEntity.ok(response);
    }
 }

@@ -3,7 +3,6 @@ package com.projectmd5.model.dto.auth;
 import com.projectmd5.validation.EmailUnique;
 import com.projectmd5.validation.PasswordMatching;
 import com.projectmd5.validation.PhoneUnique;
-import com.projectmd5.validation.UserNameUnique;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -26,22 +25,20 @@ public class RegisterRequest {
    private String fullName;
 
    @NotBlank(message = "User name can not be blank")
-   @Pattern(regexp = "(?!.*[@#$%^&+=!*()]).{6,30}",
-         message = "Username must be from 6 to 20 characters and does not contain any special characters")
-   @UserNameUnique
    private String username;
 
    @NotBlank(message = "The email is required.")
    @Email(message = "The email is not a valid email.")
-   @EmailUnique
+   @EmailUnique(email = "email")
    private String email;
 
    @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = "Phone number is not valid")
-   @PhoneUnique
+   @PhoneUnique(phone = "phone")
    private String phone;
 
    @NotBlank(message = "Password can not be blank")
    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z]).{8,}$", message = "Password must be 8 characters long and combination of lowercase letters, numbers")
+   @PhoneUnique(phone = "phone")
    private String password;
 
    @NotBlank(message = "ConfirmPassword can not be blank")
@@ -52,11 +49,11 @@ public class RegisterRequest {
    }
 
    public void setUsername(String username) {
-      this.username = username.trim();
+      this.username = username.toLowerCase().trim();
    }
 
    public void setEmail(String email) {
-      this.email = email.trim();
+      this.email = email.toLowerCase().trim();
    }
 
    public void setPhone(String phone) {

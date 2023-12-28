@@ -18,6 +18,7 @@ import java.util.UUID;
 @Data
 @Table(name = "product", uniqueConstraints = {
       @UniqueConstraint(columnNames = "productName"),
+      @UniqueConstraint(columnNames = "sku"),
 })
 public class Product {
    @Id
@@ -27,7 +28,7 @@ public class Product {
    @Column(length = 100)
    private String productName;
 
-   @Column(length = 100,unique = true, nullable = false)
+   @Column(length = 100)
    @GeneratedValue(strategy = GenerationType.UUID)
    private String sku = UUID.randomUUID().toString();
 

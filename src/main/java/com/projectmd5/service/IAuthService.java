@@ -5,6 +5,9 @@ import com.projectmd5.model.dto.auth.LoginRequest;
 import com.projectmd5.model.dto.auth.RegisterRequest;
 
 public interface IAuthService {
+   boolean existsByUsername(Long userId, String username);
+   boolean existsByEmail(Long userId, String email);
+   boolean existsByPhone(Long userId, String phone);
 
    JwtResponse login(LoginRequest login);
    String register(RegisterRequest register);

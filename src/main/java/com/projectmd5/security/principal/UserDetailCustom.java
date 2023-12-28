@@ -11,11 +11,13 @@ import java.util.Collection;
 @Builder
 @Data
 public class UserDetailCustom implements UserDetails {
+
    private Long id;
    private String username;
    private String email;
    @JsonIgnore
    private String password;
+   private boolean status;
    private Collection<? extends GrantedAuthority> authorities;
 
    @Override
@@ -40,7 +42,7 @@ public class UserDetailCustom implements UserDetails {
 
    @Override
    public boolean isAccountNonLocked() {
-      return true;
+      return status;
    }
 
    @Override

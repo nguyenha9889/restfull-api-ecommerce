@@ -38,7 +38,7 @@ public class ClientController {
    public ResponseEntity<?> searchProduct(@RequestParam String query){
       List<Product> products = null;
       if (query.trim().isEmpty()){
-         products = productService.findAll();
+         products = productService.getAllPublish();
       } else {
          products = productService.findByNameOrDescription(query, query);
       }
@@ -59,9 +59,9 @@ public class ClientController {
    }
 
    // Danh sách sản phẩm mới nhất
-   @GetMapping("/products")
+   @GetMapping("/products/new-products")
    public ResponseEntity<?> getNewProducts(){
-      return ResponseEntity.ok().body(productService.getAllNewCreated());
+      return ResponseEntity.ok().body(productService.getCreatedList());
    }
 
    // Tìm các sản phẩm theo category
