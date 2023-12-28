@@ -12,11 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@UserUnique(
-      username = "username",
-      email = "email",
-      phone = "phone"
-)
 public class UserRequest {
    private Long userId;
 
@@ -24,13 +19,16 @@ public class UserRequest {
    private String fullName;
 
    @NotBlank(message = "User name can not be blank")
+   @UsernameUnique(username = "username")
    private String username;
 
    @NotBlank(message = "The email is required.")
    @Email(message = "The email is not a valid email.")
+   @EmailUnique(email = "email")
    private String email;
 
    @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = "Phone number is not valid")
+   @PhoneUnique(phone = "phone")
    private String phone;
 
    @TypeFile
