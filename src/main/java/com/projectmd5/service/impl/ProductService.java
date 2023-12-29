@@ -1,6 +1,5 @@
 package com.projectmd5.service.impl;
 
-import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.product.BaseProductResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartException;
 
 import java.util.Date;
 import java.util.List;
@@ -46,9 +44,7 @@ public class ProductService implements IProductService {
 
    @Override
    public BaseProductResponse add(ProductRequest proRequest) {
-      if (proRequest.getImage() == null || proRequest.getImage().isEmpty()) {
-         throw new MultipartException("Upload one image with size less than 1MB");
-      }
+
       String imagePath = storageService.uploadFile((proRequest.getImage()));
 
       Product product = modelMapper.map(proRequest, Product.class);
@@ -64,10 +60,6 @@ public class ProductService implements IProductService {
    @Override
    public BaseProductResponse update(Long productId , ProductRequest proRequest) {
       Product product = findById(productId);
-
-      if (existProductName(productId, proRequest.getProductName())){
-         throw new BadRequestException("Product name is existed!");
-      }
 
       Product proUpdate = modelMapper.map(proRequest, Product.class);
       proUpdate.setProductId(productId);

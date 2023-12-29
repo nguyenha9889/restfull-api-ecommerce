@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 public @interface PasswordMatching {
    String password();
    String confirmPassword();
-   String message() default "Password and Confirm Password are not matched!";
+   String message() default "Mật khẩu nhập lại không khớp";
    Class<?>[] groups() default {};
    Class<? extends Payload>[] payload() default {};
 

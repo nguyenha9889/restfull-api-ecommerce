@@ -1,9 +1,5 @@
 package com.projectmd5.model.dto.product;
 
-import com.projectmd5.validation.TypeFile;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,22 +12,13 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ProductRequest {
    private Long productId;
-
-   @NotBlank(message = "Product name is not blank")
    private String productName;
-
    private String sku;
    private String size;
    private String dough;
-
-   @NotBlank(message = "Description is not blank")
    private String description;
-   @NotNull(message = "CategoryId is not null")
    private Long categoryId;
-   @Positive(message = "Unit price must be larger than 0")
    private BigDecimal unitPrice;
-
-   @TypeFile
    private MultipartFile image;
    private String imagePath;
 

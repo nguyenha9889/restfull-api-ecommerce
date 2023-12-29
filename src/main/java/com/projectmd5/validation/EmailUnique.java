@@ -10,8 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface EmailUnique {
-   String email();
-   String message() default "Email address is existed!";
+   String message() default "Địa chỉ email đã tồn tại";
    Class<?>[] groups() default {};
    Class<? extends Payload>[] payload() default {};
 }

@@ -3,6 +3,7 @@ package com.projectmd5.model.dto.auth;
 import com.projectmd5.validation.EmailUnique;
 import com.projectmd5.validation.PasswordMatching;
 import com.projectmd5.validation.PhoneUnique;
+import com.projectmd5.validation.UsernameUnique;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 
 @Getter
@@ -21,27 +23,26 @@ import lombok.NoArgsConstructor;
 )
 @Builder
 public class RegisterRequest {
-   @NotBlank(message = "Full name can not be blank")
+   @NotBlank(message = "Full name không được để trống")
    private String fullName;
 
-   @NotBlank(message = "User name can not be blank")
+   @NotBlank(message = "User name không được để trống")
+   @UsernameUnique
    private String username;
 
-   @NotBlank(message = "The email is required.")
-   @Email(message = "The email is not a valid email.")
-   @EmailUnique(email = "email")
+   @NotBlank(message = "Email không được để trống")
+   @Email(message = "Email không hợp lệ")
+   @EmailUnique
    private String email;
 
-   @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = "Phone number is not valid")
-   @PhoneUnique(phone = "phone")
+   @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = "Số điện thoại không hợp lệ")
+   @PhoneUnique
    private String phone;
 
-   @NotBlank(message = "Password can not be blank")
-   @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z]).{8,}$", message = "Password must be 8 characters long and combination of lowercase letters, numbers")
-   @PhoneUnique(phone = "phone")
+   @NotBlank(message = "Mật khẩu không được để trống")
+   @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z]).{8,}$", message = "Mật khẩu dài tối thiểu 8 ký tự, bao gồm số và chữ thường")
    private String password;
 
-   @NotBlank(message = "ConfirmPassword can not be blank")
    private String confirmPassword;
 
    public void setFullName(String fullName) {

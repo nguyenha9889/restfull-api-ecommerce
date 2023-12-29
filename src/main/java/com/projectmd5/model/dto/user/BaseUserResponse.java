@@ -19,5 +19,6 @@ public class BaseUserResponse {
    private String email;
    private String phone;
    private boolean status;
+   private String avatar;
    private Set<Role> roles;
 }

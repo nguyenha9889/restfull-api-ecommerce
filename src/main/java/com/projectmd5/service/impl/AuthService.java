@@ -35,6 +35,21 @@ public class AuthService implements IAuthService {
    private final IUserRepository userRepository;
 
    @Override
+   public boolean isUsernameExisted(String username) {
+      return userRepository.existsByUsernameEqualsIgnoreCase(username.trim());
+   }
+
+   @Override
+   public boolean isEmailExisted(String email) {
+      return userRepository.existsByEmailEqualsIgnoreCase(email.trim());
+   }
+
+   @Override
+   public boolean isPhoneExisted(String phone) {
+      return userRepository.existsByPhone(phone.trim());
+   }
+
+   @Override
    public JwtResponse login(LoginRequest login) {
       Authentication auth = null;
       try {
@@ -42,13 +57,13 @@ public class AuthService implements IAuthService {
                new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())
          );
       }catch (RuntimeException e) {
-         throw new AuthException("Username or Password is incorrect") ;
+         throw new AuthException("Username hoặc mật khẩu không chính xác") ;
       }
       UserDetailCustom userDetail = (UserDetailCustom) auth.getPrincipal();
 
       // check account locked or enable
       if (!userDetail.isAccountNonLocked()){
-         throw new BadRequestException("Account is Locked");
+         throw new BadRequestException("Tài khoản đang bị khóa");
       }
       List<String> roles = userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
@@ -79,33 +94,5 @@ public class AuthService implements IAuthService {
       return "Register successfully";
    }
 
-   @Override
-   public boolean existsByUsername(Long userId, String username) {
-      for (User u: userRepository.findAll()) {
-         if (u.getEmail().equalsIgnoreCase(username.toLowerCase().trim())) {
-            return !Objects.equals(u.getUserId(), userId);
-         }
-      }
-      return false;
-   }
 
-   @Override
-   public boolean existsByEmail(Long userId, String email) {
-      for (User u: userRepository.findAll()) {
-         if (u.getEmail().equalsIgnoreCase(email.toLowerCase().trim())) {
-            return !Objects.equals(u.getUserId(), userId);
-         }
-      }
-      return false;
-   }
-
-   @Override
-   public boolean existsByPhone(Long userId, String phone) {
-      for (User u: userRepository.findAll()) {
-         if (u.getEmail().equalsIgnoreCase(phone.trim())) {
-            return !Objects.equals(u.getUserId(), userId);
-         }
-      }
-      return false;
-   }
 }

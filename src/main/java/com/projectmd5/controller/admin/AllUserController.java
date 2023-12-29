@@ -20,7 +20,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api.myservice.com/v1/admin")
-public class AccountController {
+public class AllUserController {
 
    private final ModelMapper modelMapper;
    private final IUserService userService;

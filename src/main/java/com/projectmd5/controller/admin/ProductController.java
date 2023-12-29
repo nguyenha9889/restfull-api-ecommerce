@@ -1,18 +1,21 @@
 package com.projectmd5.controller.admin;
 
-import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.model.dto.product.BaseProductResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.service.IProductService;
-import jakarta.validation.Valid;
+import com.projectmd5.validation.ProductValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,6 +24,7 @@ public class ProductController {
 
    private final IProductService productService;
    private final ModelMapper modelMapper;
+   private final ProductValidator validator;
 
    @GetMapping
    public ResponseEntity<?> getList(
@@ -41,9 +45,16 @@ public class ProductController {
       return ResponseEntity.ok(response);
    }
    @PostMapping
-   public ResponseEntity<?> addProduct(@Valid @RequestBody ProductRequest proRequest) {
-      if (productService.existProductName(null, proRequest.getProductName())) {
-         throw new BadRequestException("Product name is existed!");
+   public ResponseEntity<?> addProduct(@RequestBody ProductRequest proRequest,
+                                       BindingResult bindingResult) {
+
+      validator.validate(proRequest, bindingResult);
+
+      if (bindingResult.hasErrors()){
+         Map<String, String> errors = new HashMap<>();
+         bindingResult.getFieldErrors().forEach(err ->
+               errors.put(err.getField(), err.getCode()));
+         return ResponseEntity.badRequest().body(errors);
       }
 
       BaseProductResponse response = productService.add(proRequest);
@@ -51,7 +62,18 @@ public class ProductController {
    }
 
    @PutMapping("/{productId}")
-   public ResponseEntity<?> updateProduct(@PathVariable Long productId, @Valid @RequestBody ProductRequest proRequest){
+   public ResponseEntity<?> updateProduct(@PathVariable Long productId,
+                                          @RequestBody ProductRequest proRequest,
+                                          BindingResult bindingResult){
+      productService.findById(productId);
+      validator.validate(proRequest, bindingResult);
+
+      if (bindingResult.hasErrors()){
+         Map<String, String> errors = new HashMap<>();
+         bindingResult.getFieldErrors().forEach(err ->
+               errors.put(err.getField(), err.getCode()));
+         return ResponseEntity.badRequest().body(errors);
+      }
 
       BaseProductResponse response = productService.update(productId,proRequest);
       return ResponseEntity.ok(response);

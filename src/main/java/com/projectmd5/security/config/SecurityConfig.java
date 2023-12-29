@@ -54,7 +54,6 @@ public class SecurityConfig {
                         .requestMatchers("/api.myservice.com/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api.myservice.com/v1/pm/**").hasAnyRole("ADMIN","PM")
                         .requestMatchers("/api.myservice.com/v1/user/**").hasAnyRole("ADMIN","PM", "USER")
-                        .requestMatchers("/api.myservice.com/v1/account/**").hasAnyRole("ADMIN","PM", "USER")
                         .anyRequest().authenticated());
 
       http.authenticationProvider(authProvider());

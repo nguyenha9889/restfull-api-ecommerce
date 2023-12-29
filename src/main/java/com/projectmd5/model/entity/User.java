@@ -42,7 +42,6 @@ public class User {
 
    private boolean status;
    private String avatar;
-   private String address;
 
    @Temporal(TemporalType.DATE)
    private Date createdAt = new Date();
