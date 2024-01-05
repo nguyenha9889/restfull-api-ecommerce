@@ -58,8 +58,8 @@ public class ExceptionHandlerAdvice {
             HttpStatus.UNAUTHORIZED.value(),
             new Date(),
             ex.getMessage(),
-            request.getDescription(false));
-
+            request.getDescription(false)
+      );
       return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
    }
 

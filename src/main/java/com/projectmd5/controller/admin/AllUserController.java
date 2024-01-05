@@ -25,11 +25,6 @@ public class AllUserController {
    private final ModelMapper modelMapper;
    private final IUserService userService;
    private final IRoleService roleService;
- /*
-/api.myservice.com/v1/admin/users/{userId}
-/api.myservice.com/v1/admin/roles
-/api.myservice.com/v1/admin/users/search
-*/
 
    @GetMapping("/users")
    public ResponseEntity<?> getList(

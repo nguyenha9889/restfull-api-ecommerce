@@ -14,11 +14,9 @@ import java.util.List;
 @Builder
 public class JwtResponse {
    @JsonIgnore
-   private Long userId;
    private String username;
-   private String email;
-   private List<String> roles;
    private String accessToken;
    private String refreshToken;
    private final String type = "Bearer Token";
+   private List<String> roles;
 }

@@ -23,7 +23,7 @@ public class AccountValidator implements Validator {
    public void validate(Object target, Errors errors) {
       AccountRequest request = (AccountRequest) target;
 
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fullName", "Họ tên không để trống");
+      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "Họ tên không để trống");
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "Địa chỉ email không để trống");
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone", "Số điện thoại không để trống");
 

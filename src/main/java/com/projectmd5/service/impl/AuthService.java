@@ -72,10 +72,9 @@ public class AuthService implements IAuthService {
 
       return JwtResponse.builder()
             .username(userDetail.getUsername())
-            .email(userDetail.getEmail())
-            .roles(roles)
             .accessToken(accessToken)
             .refreshToken(refreshToken)
+            .roles(roles)
             .build();
    }
 

@@ -1,5 +1,6 @@
 package com.projectmd5.controller;
 
+import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.auth.JwtResponse;
 import com.projectmd5.model.dto.auth.LoginRequest;
 import com.projectmd5.model.dto.auth.RegisterRequest;
@@ -21,8 +22,8 @@ public class AuthController {
 
    @PostMapping("/sign-up")
    public ResponseEntity<?> signUp(@Valid @RequestBody RegisterRequest register) {
-
-      return new ResponseEntity<>(authService.register(register), HttpStatus.CREATED);
+      MessageResponse response = new MessageResponse(authService.register(register));
+      return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
 
    @PostMapping("/sign-in")

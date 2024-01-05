@@ -42,11 +42,11 @@ public class SecurityConfig {
 
    @Bean
    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      http.csrf(AbstractHttpConfigurer::disable)
+      http.cors(Customizer.withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
             .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt))
             .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth ->
                   auth.requestMatchers("/api.myservice.com/v1/auth/**").permitAll()
                         .requestMatchers("/api.myservice.com/v1/categories").permitAll()
