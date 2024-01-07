@@ -1,6 +1,5 @@
 package com.projectmd5.model.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class JwtResponse {
-   @JsonIgnore
-   private String username;
+public class AuthResponse {
+   private Long userId;
    private String accessToken;
    private String refreshToken;
-   private final String type = "Bearer Token";
    private List<String> roles;
+
+   public AuthResponse(String accessToken) {
+   }
 }

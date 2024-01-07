@@ -9,13 +9,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static com.projectmd5.constants.MessageConstant.CONFIRM_PASSWORD_NOT_MATCH;
+
 @Constraint(validatedBy = PasswordMatchingValidator.class)
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PasswordMatching {
    String password();
    String confirmPassword();
-   String message() default "Mật khẩu nhập lại không khớp";
+   String message() default CONFIRM_PASSWORD_NOT_MATCH;
    Class<?>[] groups() default {};
    Class<? extends Payload>[] payload() default {};
 

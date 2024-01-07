@@ -35,7 +35,8 @@ public class ProjectMd5Application {
             registry.addMapping("/api.myservice.com/**")
                   .allowedMethods("GET", "POST", "PUT", "DELETE")
                   .allowedOrigins("*")
-                  .allowedHeaders("*");
+                  .allowedHeaders("*")
+                  .maxAge(3600);
          }
       };
    }

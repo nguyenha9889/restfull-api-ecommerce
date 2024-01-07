@@ -10,6 +10,8 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.projectmd5.constants.MessageConstant.*;
+
 @Component
 @RequiredArgsConstructor
 public class ProductValidator implements Validator {
@@ -23,22 +25,22 @@ public class ProductValidator implements Validator {
    public void validate(Object target, Errors errors) {
       ProductRequest request = (ProductRequest) target;
 
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "productName", "Tên sản phẩm không để trống");
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "Mô tả không để trống");
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "unitPrice", "Giá sản phẩm không để trống");
+      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "productName", FIELD_NOT_BLANK);
+      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", FIELD_NOT_BLANK);
+      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "unitPrice", PRICE_NOT_BLANK);
 
       if (!errors.hasFieldErrors()){
          if (request.getUnitPrice().doubleValue() <= 0) {
-            errors.rejectValue("unitPrice", "Giá sản phẩm phải lớn hơn 0");
+            errors.rejectValue("unitPrice", PRICE_RULE);
          }
 
          if (productService.existProductName(request.getProductId(), request.getProductName())){
-            errors.rejectValue("productName", "Tên sản phẩm đã tồn tại");
+            errors.rejectValue("productName", PRODUCT_EXISTED);
          }
       }
 
       if (request.getImage() != null && request.getImage().getSize() > 0 && !isSupportedImageType(request.getImage())) {
-         errors.rejectValue("image", "Hỗ trợ định dạng ảnh png, jpg và jpeg");
+         errors.rejectValue("image", FILE_UPLOAD_RULE);
       } else if (request.getImage() != null && request.getImage().getSize() > 1024*1024){
          errors.rejectValue("image", "Dung lượng ảnh thấp hơn 1MB");
       }

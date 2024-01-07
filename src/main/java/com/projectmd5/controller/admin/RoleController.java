@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import static com.projectmd5.constants.PathConstant.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api.myservice.com/v1/admin/roles")
+@RequestMapping(API_V1_ADMIN)
 public class RoleController {
    private final IRoleService roleService;
-   @GetMapping
+   @GetMapping(ROLES)
    public ResponseEntity<?> getList(){
       List<Role> roles = roleService.findAll();
       return ResponseEntity.ok(roles);

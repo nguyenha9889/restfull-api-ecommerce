@@ -27,7 +27,6 @@ public class SecurityConfig {
    private final AuthEntryPointJwt authEntryPointJwt; // xử lý exception
    private final JwtAuthTokenFilter jwtAuthTokenFilter;
    private final PasswordEncoder passwordEncoder;
-   private final AccessDeniedHandler accessDeniedHandler;
    @Bean
    public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
       return config.getAuthenticationManager();
@@ -45,7 +44,6 @@ public class SecurityConfig {
       http.cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt))
-            .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth ->
                   auth.requestMatchers("/api.myservice.com/v1/auth/**").permitAll()

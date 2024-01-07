@@ -14,5 +14,5 @@ public interface IAccountService extends IGenericService<User, Long>{
    Address addNewAddress(AddressRequest request);
    Address findAddressById(Long addressId);
    Address update(Long addressId, AddressRequest request);
-   List<Address> getAllAddresses(Long userId);
+   List<Address> getAddresses(Long userId);
 }

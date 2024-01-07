@@ -1,5 +1,8 @@
 package com.projectmd5.controller.admin;
 
+import static com.projectmd5.constants.PathConstant.*;
+import static com.projectmd5.constants.MessageConstant.*;
+
 import com.projectmd5.model.dto.user.BaseUserResponse;
 import com.projectmd5.model.dto.user.UserPageResponse;
 import com.projectmd5.model.entity.Role;
@@ -9,7 +12,6 @@ import com.projectmd5.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +21,14 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api.myservice.com/v1/admin")
+@RequestMapping(API_V1_ADMIN)
 public class AllUserController {
 
    private final ModelMapper modelMapper;
    private final IUserService userService;
    private final IRoleService roleService;
 
-   @GetMapping("/users")
+   @GetMapping(USER)
    public ResponseEntity<?> getList(
          @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
@@ -38,32 +40,29 @@ public class AllUserController {
       return ResponseEntity.ok(response);
    }
 
-   @PutMapping("/users/{userId}")
+   @PutMapping(USER_BY_ID)
    public ResponseEntity<?> lockOrEnableAccount(@PathVariable Long userId, @RequestBody Boolean status){
       User user = userService.findById(userId);
       user.setStatus(status);
       user.setCreatedAt(new Date());
       userService.save(user);
       if (!status){
-         return ResponseEntity.ok("This user has been block");
+         return ResponseEntity.ok(USER_BLOCK);
       } else {
-         return ResponseEntity.ok("This user has been active");
+         return ResponseEntity.ok(USER_ACTIVE);
       }
    }
 
-   @PostMapping("/{userId}/role")
+   @PostMapping(ROLES_TO_USER)
    public ResponseEntity<?> addRoleToUser(@PathVariable Long userId, @RequestBody Long roleId){
       User user = userService.findById(userId);
       if (!user.isStatus()){
-         return new ResponseEntity<>(
-               "Can not add role because this user has been block",
-               HttpStatus.BAD_REQUEST);
+         return ResponseEntity.badRequest().body(USER_BLOCK);
       }
       Role role = roleService.findById(roleId);
       if (user.getRoles().stream().anyMatch(r -> Objects.equals(r.getId(), roleId))) {
-         return new ResponseEntity<>(
-               "User has been granted this role " + role.getRoleName(),
-               HttpStatus.BAD_REQUEST);
+         return ResponseEntity.badRequest()
+               .body(ROLE_EXISTED);
       }
       user.getRoles().add(role);
       user.setUpdatedAt(new Date());
@@ -72,23 +71,22 @@ public class AllUserController {
       return ResponseEntity.ok().body(response);
    }
 
-   @DeleteMapping("/{userId}/role")
+   @DeleteMapping(ROLES_TO_USER)
    public ResponseEntity<?> deleteRoleOfUser(@PathVariable Long userId, @RequestBody Long roleId){
       User user = userService.findById(userId);
       Role role = roleService.findById(roleId);
       if (user.getRoles().stream().noneMatch(r -> Objects.equals(r.getId(), roleId))) {
-         return new ResponseEntity<>(
-               "The user does not have this role " + role.getRoleName(),
-               HttpStatus.BAD_REQUEST);
+         return ResponseEntity.badRequest()
+               .body(ROLE_NOT_FOUND);
       }
 
       user.getRoles().remove(role);
       user.setUpdatedAt(new Date());
       userService.save(user);
-      return ResponseEntity.ok().body("Delete user's role successfully");
+      return ResponseEntity.ok().body(DELETE_SUCCESS);
    }
 
-   @GetMapping("/users/search")
+   @GetMapping(SEARCH_BY_USER)
    public ResponseEntity<?> search(@RequestParam(name = "fullName", required = false) String name){
 
       Pageable pageable = userService.getPageable(0, 5, "userId", "asc");

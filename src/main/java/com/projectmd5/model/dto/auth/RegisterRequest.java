@@ -11,7 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+
+import static com.projectmd5.constants.MessageConstant.*;
 
 
 @Getter
@@ -23,24 +24,23 @@ import org.springframework.beans.factory.annotation.Value;
 )
 @Builder
 public class RegisterRequest {
-   @NotBlank(message = "Full name không được để trống")
+   @NotBlank(message = FULLNAME_NOT_BLANK)
    private String fullName;
 
-   @NotBlank(message = "User name không được để trống")
+   @NotBlank(message = USERNAME_NOT_BLANK)
    @UsernameUnique
    private String username;
 
-   @NotBlank(message = "Email không được để trống")
-   @Email(message = "Email không hợp lệ")
+   @NotBlank(message = EMAIL_NOT_BLANK)
+   @Email(message = EMAIL_INVALID)
    @EmailUnique
    private String email;
 
-   @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = "Số điện thoại không hợp lệ")
+   @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = PHONE_INVALID)
    @PhoneUnique
    private String phone;
 
-   @NotBlank(message = "Mật khẩu không được để trống")
-   @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z]).{8,}$", message = "Mật khẩu dài tối thiểu 8 ký tự, bao gồm số và chữ thường")
+   @Pattern(regexp = "(?=.*\\d)(?=.*[a-z]).{8,}$", message = PASSWORD_RULE)
    private String password;
 
    private String confirmPassword;

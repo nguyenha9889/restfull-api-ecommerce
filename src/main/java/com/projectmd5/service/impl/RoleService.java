@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.projectmd5.constants.MessageConstant.ROLE_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class RoleService implements IRoleService {
@@ -18,7 +20,7 @@ public class RoleService implements IRoleService {
    @Override
    public Role findByRoleName(RoleName roleName) {
       return roleRepository.findByRoleName(roleName).orElseThrow(
-            () -> new ResourceNotFoundException("Role not found with role name " + roleName)
+            () -> new ResourceNotFoundException(ROLE_NOT_FOUND)
       );
    }
 
@@ -30,7 +32,7 @@ public class RoleService implements IRoleService {
    @Override
    public Role findById(Long id) {
       return roleRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("Role not found with roleId " + id)
+            () -> new ResourceNotFoundException(ROLE_NOT_FOUND)
       );
    }
 }

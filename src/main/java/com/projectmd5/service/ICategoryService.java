@@ -11,4 +11,5 @@ public interface ICategoryService extends IGenericService<Category, Long> {
    List<Category> findByStatusTrue();
    Category add(CategoryRequest cateRequest);
    Category update(Long categoryId, CategoryRequest cateRequest);
+   boolean existCategoryName(Long id, String name);
 }

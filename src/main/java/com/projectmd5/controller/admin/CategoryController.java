@@ -4,20 +4,29 @@ import com.projectmd5.model.dto.category.CatPageResponse;
 import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.service.ICategoryService;
+import com.projectmd5.validation.CategoryValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.projectmd5.constants.PathConstant.*;
+import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api.myservice.com/v1/admin/categories")
+@RequestMapping(API_V1_ADMIN)
 public class CategoryController {
 
    private final ICategoryService categoryService;
+   private final CategoryValidator validator;
 
-   @GetMapping
+   @GetMapping(CATEGORIES)
    public ResponseEntity<?> getList(
          @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
@@ -28,27 +37,36 @@ public class CategoryController {
       return ResponseEntity.ok(response);
    }
 
-   @GetMapping("/{categoryId}")
+   @GetMapping(CATEGORY_ID)
    public ResponseEntity<?> getCategory(@PathVariable Long categoryId){
       Category cate = categoryService.findById(categoryId);
       return ResponseEntity.ok(cate);
    }
    @PostMapping
-   public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryRequest cateRequest){
+   public ResponseEntity<?> addCategory(@RequestBody CategoryRequest cateRequest,
+                                        BindingResult bindingResult) {
+      validator.validate(cateRequest, bindingResult);
+
+      if (bindingResult.hasErrors()){
+         Map<String, String> errors = new HashMap<>();
+         bindingResult.getFieldErrors().forEach(err ->
+               errors.put(err.getField(), err.getCode()));
+         return ResponseEntity.badRequest().body(errors);
+      }
 
       Category category = categoryService.add(cateRequest);
       return new ResponseEntity<>(category, HttpStatus.CREATED);
    }
 
-   @PutMapping("/{categoryId}")
+   @PutMapping(CATEGORY_ID)
    public ResponseEntity<?> updateCategory(@PathVariable Long categoryId, @Valid @RequestBody CategoryRequest cateDTO){
       Category cateUpdate = categoryService.update(categoryId, cateDTO);
       return ResponseEntity.ok(cateUpdate);
    }
 
-   @DeleteMapping("/{categoryId}")
+   @DeleteMapping(CATEGORY_ID)
    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId){
       categoryService.delete(categoryId);
-      return ResponseEntity.ok("Category deleted successfully!");
+      return ResponseEntity.ok(DELETE_SUCCESS);
    }
 }

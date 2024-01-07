@@ -14,15 +14,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import static com.projectmd5.constants.PathConstant.*;
+
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api.myservice.com/v1")
+@RequestMapping(API_V1)
 public class AccountController {
    private final IAccountService accountService;
    private final AccountValidator validator;
    private final ModelMapper modelMapper;
-   @GetMapping("/user/{userId}")
+   @GetMapping(USER_ID)
    public ResponseEntity<?> getUserById(@PathVariable Long userId){
       User user = accountService.findById(userId);
       UserResponse response = modelMapper.map(user, UserResponse.class);
@@ -30,7 +32,7 @@ public class AccountController {
       return ResponseEntity.ok(response);
    }
 
-   @PutMapping("/user/{userId}")
+   @PutMapping(USER_ID)
    public ResponseEntity<?> updateUser(@PathVariable Long userId,
                                        @RequestBody AccountRequest request,
                                        BindingResult bindingResult){
@@ -48,7 +50,7 @@ public class AccountController {
       return ResponseEntity.ok(response);
    }
 
-   @PutMapping("/user/change-password")
+   @PutMapping(CHANGE_PASSWORD)
    public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordRequest request){
 
       accountService.findById(request.getUserId());
@@ -56,9 +58,9 @@ public class AccountController {
       return ResponseEntity.ok(response);
    }
 
-   @GetMapping("/user/address/{userId}")
-   public ResponseEntity<?> getAllAddresses(@PathVariable Long userId){
-      return ResponseEntity.ok(accountService.getAllAddresses(userId));
+   @GetMapping(USER_ADDRESS_FULL)
+   public ResponseEntity<?> getAddresses(@PathVariable Long userId){
+      return ResponseEntity.ok(accountService.getAddresses(userId));
    }
 
    @PostMapping("/user/address")
@@ -69,13 +71,13 @@ public class AccountController {
       return ResponseEntity.ok(response);
    }
 
-   @GetMapping("/user/address/{addressId}")
+   @GetMapping(USER_ADDRESS_ID)
    public ResponseEntity<?> getAddressById(@PathVariable Long addressId){
 
       return ResponseEntity.ok(accountService.findAddressById(addressId));
    }
 
-   @PutMapping("/user/address/{addressId}")
+   @PutMapping(USER_ADDRESS_ID)
    public ResponseEntity<?> updateAddress(@PathVariable Long addressId,
          @Valid @RequestBody AddressRequest request){
 

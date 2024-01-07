@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
+
 @RequiredArgsConstructor
 @Service
 public class ProductService implements IProductService {
@@ -38,7 +40,7 @@ public class ProductService implements IProductService {
    @Override
    public Product findById(Long id) {
       return productRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("Product not found with id " + id)
+            () -> new ResourceNotFoundException(PRODUCT_NOT_FOUND)
       );
    }
 
@@ -48,7 +50,6 @@ public class ProductService implements IProductService {
       String imagePath = storageService.uploadFile((proRequest.getImage()));
 
       Product product = modelMapper.map(proRequest, Product.class);
-      //product.setImagePath(product.getImagePath());
       product.setImagePath(imagePath);
       product.setSku(UUID.randomUUID().toString());
       product.setCreatedAt(new Date());

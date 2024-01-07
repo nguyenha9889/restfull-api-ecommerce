@@ -4,6 +4,7 @@ import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.dto.category.CatPageResponse;
 import com.projectmd5.model.entity.Category;
+import com.projectmd5.model.entity.Product;
 import com.projectmd5.repository.ICategoryRepository;
 import com.projectmd5.service.ICategoryService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static com.projectmd5.constants.MessageConstant.CATEGORY_NOT_FOUND;
 
 
 @Service
@@ -36,7 +40,7 @@ public class CategoryService implements ICategoryService {
    @Override
    public Category findById(Long id) {
       return categoryRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("Category not found with id " + id)
+            () -> new ResourceNotFoundException(CATEGORY_NOT_FOUND)
       );
    }
 
@@ -88,5 +92,15 @@ public class CategoryService implements ICategoryService {
       }
       categoryRepository.save(cate);
       return cate;
+   }
+
+   @Override
+   public boolean existCategoryName(Long id, String name) {
+      for (Category c: findAll()) {
+         if (c.getCategoryName().equalsIgnoreCase(name.trim())) {
+            return !Objects.equals(c.getCategoryId(), id);
+         }
+      }
+      return false;
    }
 }

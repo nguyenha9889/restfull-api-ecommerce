@@ -1,8 +1,7 @@
 package com.projectmd5.service.impl;
 
-import com.projectmd5.exception.AuthException;
 import com.projectmd5.exception.BadRequestException;
-import com.projectmd5.model.dto.auth.JwtResponse;
+import com.projectmd5.model.dto.auth.AuthResponse;
 import com.projectmd5.model.dto.auth.LoginRequest;
 import com.projectmd5.model.dto.auth.RegisterRequest;
 import com.projectmd5.model.entity.Role;
@@ -18,21 +17,24 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.projectmd5.constants.MessageConstant.*;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService implements IAuthService {
    private final AuthenticationManager authManager;
-   private final JwtTokenBuilder jwtBuilder;
    private final IRoleService roleService;
    private final PasswordEncoder passwordEncoder;
    private final ModelMapper modelMapper;
    private final IUserRepository userRepository;
+   private final JwtTokenBuilder jwtBuilder;
 
    @Override
    public boolean isUsernameExisted(String username) {
@@ -50,28 +52,32 @@ public class AuthService implements IAuthService {
    }
 
    @Override
-   public JwtResponse login(LoginRequest login) {
+   public AuthResponse login(LoginRequest login) {
       Authentication auth = null;
       try {
          auth = authManager.authenticate(
                new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())
          );
       }catch (RuntimeException e) {
-         throw new AuthException("Username hoặc mật khẩu không chính xác") ;
+         throw new AuthenticationException(CREDENTIALS_INVALID){
+            @Override
+            public String getMessage() {
+               return super.getMessage();
+            }
+         };
       }
       UserDetailCustom userDetail = (UserDetailCustom) auth.getPrincipal();
 
       // check account locked or enable
       if (!userDetail.isAccountNonLocked()){
-         throw new BadRequestException("Tài khoản đang bị khóa");
+         throw new BadRequestException(USER_BLOCK);
       }
       List<String> roles = userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
       String accessToken = jwtBuilder.generateAccessToken(userDetail);
       String refreshToken = jwtBuilder.generateRefreshToken(userDetail);
-
-      return JwtResponse.builder()
-            .username(userDetail.getUsername())
+      return AuthResponse.builder()
+            .userId(userDetail.getId())
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .roles(roles)
@@ -90,7 +96,7 @@ public class AuthService implements IAuthService {
       user.setCreatedAt(new Date());
 
       userRepository.save(user);
-      return "Register successfully";
+      return REGISTER_SUCCESS;
    }
 
 

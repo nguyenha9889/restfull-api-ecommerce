@@ -21,18 +21,18 @@ public class JwtTokenBuilder {
    @Value("${jwt.expired.refresh-token}")
    private long refreshTokenExpiration;
 
-   public String generateAccessToken(UserDetails userDetails) {
+   public String generateAccessToken(UserDetails principal) {
       return Jwts.builder()
-            .setSubject(userDetails.getUsername())
+            .setSubject(principal.getUsername())
             .setIssuedAt(new Date())
             .setExpiration(new Date((new Date()).getTime() + accessTokenExpiration))
             .signWith(key(), SignatureAlgorithm.HS256)
             .compact();
    }
 
-   public String generateRefreshToken(UserDetails userDetails) {
+   public String generateRefreshToken(UserDetails principal) {
       return Jwts.builder()
-            .setSubject(userDetails.getUsername())
+            .setSubject(principal.getUsername())
             .setIssuedAt(new Date())
             .setExpiration(new Date((new Date()).getTime() + refreshTokenExpiration))
             .signWith(key(), SignatureAlgorithm.HS256)

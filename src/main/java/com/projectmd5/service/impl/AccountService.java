@@ -124,7 +124,7 @@ public class AccountService implements IAccountService {
    }
 
    @Override
-   public List<Address> getAllAddresses(Long userId) {
+   public List<Address> getAddresses(Long userId) {
       User user = findById(userId);
       return user.getAddresses();
    }

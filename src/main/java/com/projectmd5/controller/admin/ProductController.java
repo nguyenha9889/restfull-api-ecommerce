@@ -16,17 +16,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import static com.projectmd5.constants.PathConstant.*;
+import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
+
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api.myservice.com/v1/admin/products")
+@RequestMapping(API_V1_ADMIN)
 public class ProductController {
 
    private final IProductService productService;
    private final ModelMapper modelMapper;
    private final ProductValidator validator;
 
-   @GetMapping
+   @GetMapping(PRODUCTS)
    public ResponseEntity<?> getList(
          @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
@@ -38,14 +41,14 @@ public class ProductController {
       return ResponseEntity.ok(response);
    }
 
-   @GetMapping("/{productId}")
+   @GetMapping(PRODUCT_ID)
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
       Product pro = productService.findById(productId);
       BaseProductResponse response = modelMapper.map(pro, BaseProductResponse.class);
       return ResponseEntity.ok(response);
    }
-   @PostMapping
-   public ResponseEntity<?> addProduct(@RequestBody ProductRequest proRequest,
+   @PostMapping(PRODUCT_ID)
+   public ResponseEntity<?> addProduct(@ModelAttribute ProductRequest proRequest,
                                        BindingResult bindingResult) {
 
       validator.validate(proRequest, bindingResult);
@@ -61,9 +64,9 @@ public class ProductController {
       return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
 
-   @PutMapping("/{productId}")
+   @PutMapping(PRODUCT_ID)
    public ResponseEntity<?> updateProduct(@PathVariable Long productId,
-                                          @RequestBody ProductRequest proRequest,
+                                          @ModelAttribute ProductRequest proRequest,
                                           BindingResult bindingResult){
       productService.findById(productId);
       validator.validate(proRequest, bindingResult);
@@ -79,9 +82,9 @@ public class ProductController {
       return ResponseEntity.ok(response);
    }
 
-   @DeleteMapping("/{productId}")
+   @DeleteMapping(PRODUCT_ID)
    public ResponseEntity<?> deleteCategory(@PathVariable Long productId){
       productService.delete(productId);
-      return ResponseEntity.ok("Product deleted successfully!");
+      return ResponseEntity.ok(DELETE_SUCCESS);
    }
 }

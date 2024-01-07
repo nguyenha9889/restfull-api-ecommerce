@@ -13,6 +13,7 @@ import java.util.Collection;
 public class UserDetailCustom implements UserDetails {
 
    private Long id;
+   private String fullName;
    private String username;
    private String email;
    @JsonIgnore

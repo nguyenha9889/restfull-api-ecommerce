@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.projectmd5.constants.MessageConstant.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
@@ -56,7 +58,7 @@ public class UserService implements IUserService {
    @Override
    public User findById(Long userId) {
       return userRepository.findByUserId(userId).orElseThrow(
-            () -> new ResourceNotFoundException("User not found with id " + userId)
+            () -> new ResourceNotFoundException(USER_NOT_FOUND)
       );
    }
 
