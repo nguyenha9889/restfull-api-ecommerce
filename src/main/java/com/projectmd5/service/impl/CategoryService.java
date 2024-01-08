@@ -103,4 +103,22 @@ public class CategoryService implements ICategoryService {
       }
       return false;
    }
+
+   @Override
+   public CatPageResponse search(String name, int pageNo, int pageSize, String sortBy, String sortDir) {
+      Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+
+      Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+      Page<Category> pages = categoryRepository.findAllByCategoryNameContainingIgnoreCase(name, pageable);
+      List<Category> data = pages.getContent();
+      return CatPageResponse.builder()
+            .data(data)
+            .pageNo(pageNo)
+            .pageSize(pageSize)
+            .totalElements(pages.getTotalElements())
+            .totalPages(pages.getTotalPages())
+            .last(pages.isLast())
+            .build();
+   }
 }

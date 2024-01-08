@@ -41,8 +41,18 @@ public class AuthController {
       return ResponseEntity.ok().body(new MessageResponse("Logout successfully"));
    }
 
-   @PostMapping(REFRESH_TOKEN)
-   public ResponseEntity<?> getNewToken() {
+   @GetMapping(REFRESH_TOKEN)
+   public ResponseEntity<?> getNewToken(@RequestParam(value = "refreshToken") String refreshToken){
+      String username = jwtBuilder.getUserNameFromToken(refreshToken);
+      if (!authService.isUsernameExisted(username)) {
+         return ResponseEntity.badRequest()
+               .body(new MessageResponse("Invalid refresh token"));
+      }
+      if (jwtBuilder.isTokenExpired(refreshToken)) {
+         return ResponseEntity.badRequest()
+               .body(new MessageResponse("Refresh token is expired. Please login again"));
+      }
+
       Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       String newAccessToken = jwtBuilder.generateAccessToken((UserDetailCustom) principal);
       AuthResponse authResponse = new AuthResponse(newAccessToken);

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.projectmd5.constants.PathConstant.*;
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
@@ -31,10 +32,16 @@ public class CategoryController {
          @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
          @RequestParam(value = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
-         @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+         @RequestParam(value = "sortDir", defaultValue = "dsc", required = false) String sortDir,
+         @RequestParam(value = "categoryName", defaultValue = "", required = false) String name
    ){
-      CatPageResponse response = categoryService.getAll(pageNo, pageSize, sortBy, sortDir);
-      return ResponseEntity.ok(response);
+      CatPageResponse catPageResponse = null;
+      if (Objects.equals(name, "") || name.isBlank()){
+         catPageResponse = categoryService.getAll(pageNo, pageSize, sortBy, sortDir);
+         return ResponseEntity.ok(catPageResponse);
+      }
+      catPageResponse = categoryService.search(name, pageNo, pageSize, sortBy, sortDir);
+      return ResponseEntity.ok(catPageResponse);
    }
 
    @GetMapping(CATEGORY_ID)

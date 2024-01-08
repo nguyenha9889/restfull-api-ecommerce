@@ -12,4 +12,5 @@ public interface ICategoryService extends IGenericService<Category, Long> {
    Category add(CategoryRequest cateRequest);
    Category update(Long categoryId, CategoryRequest cateRequest);
    boolean existCategoryName(Long id, String name);
+   CatPageResponse search(String name, int pageNo, int pageSize, String sortBy, String sortDir);
 }
