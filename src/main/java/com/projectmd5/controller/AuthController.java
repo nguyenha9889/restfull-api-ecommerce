@@ -3,9 +3,9 @@ package com.projectmd5.controller;
 import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.auth.AuthResponse;
 import com.projectmd5.model.dto.auth.LoginRequest;
+import com.projectmd5.model.dto.auth.RefreshTokenRequest;
 import com.projectmd5.model.dto.auth.RegisterRequest;
 import com.projectmd5.security.jwt.JwtTokenBuilder;
-import com.projectmd5.security.principal.UserDetailCustom;
 import com.projectmd5.service.IAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,20 +41,19 @@ public class AuthController {
       return ResponseEntity.ok().body(new MessageResponse("Logout successfully"));
    }
 
-   @GetMapping(REFRESH_TOKEN)
-   public ResponseEntity<?> getNewToken(@RequestParam(value = "refreshToken") String refreshToken){
-      String username = jwtBuilder.getUserNameFromToken(refreshToken);
+   @PostMapping(REFRESH_TOKEN)
+   public ResponseEntity<?> refreshToken(RefreshTokenRequest request) {
+      String username = jwtBuilder.getUserNameFromToken(request.getRefreshToken());
       if (!authService.isUsernameExisted(username)) {
          return ResponseEntity.badRequest()
                .body(new MessageResponse("Invalid refresh token"));
       }
-      if (jwtBuilder.isTokenExpired(refreshToken)) {
+      if (jwtBuilder.isTokenExpired(request.getRefreshToken())) {
          return ResponseEntity.badRequest()
-               .body(new MessageResponse("Refresh token is expired. Please login again"));
+               .body(new MessageResponse("Refresh token is expired"));
       }
 
-      Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-      String newAccessToken = jwtBuilder.generateAccessToken((UserDetailCustom) principal);
+      String newAccessToken = jwtBuilder.generateNewAccessToken(username);
       AuthResponse authResponse = new AuthResponse(newAccessToken);
       return ResponseEntity.ok().body(authResponse);
    }

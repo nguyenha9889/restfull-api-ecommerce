@@ -34,7 +34,7 @@ public class JwtTokenBuilder {
       return Jwts.builder()
             .setSubject(principal.getUsername())
             .setIssuedAt(new Date())
-            .setExpiration(new Date((new Date()).getTime() + refreshTokenExpiration))
+            .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
             .signWith(key(), SignatureAlgorithm.HS256)
             .compact();
    }
@@ -65,6 +65,19 @@ public class JwtTokenBuilder {
    public boolean isTokenExpired(String token){
       return Jwts.parserBuilder().setSigningKey(key()).build()
             .parseClaimsJws(token).getBody().getExpiration().before(new Date());
+   }
+   public Date getExpiredDateFromToken(String token) {
+      return Jwts.parserBuilder().setSigningKey(key()).build()
+            .parseClaimsJws(token).getBody().getExpiration();
+   }
+
+   public String generateNewAccessToken(String username) {
+      return Jwts.builder()
+            .setSubject(username)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date((new Date()).getTime() + accessTokenExpiration))
+            .signWith(key(), SignatureAlgorithm.HS256)
+            .compact();
    }
    private Key key() {
       return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
