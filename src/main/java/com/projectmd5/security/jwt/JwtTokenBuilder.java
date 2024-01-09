@@ -66,9 +66,9 @@ public class JwtTokenBuilder {
       return Jwts.parserBuilder().setSigningKey(key()).build()
             .parseClaimsJws(token).getBody().getExpiration().before(new Date());
    }
-   public Date getExpiredDateFromToken(String token) {
+   public Long getExpiredFromToken(String token) {
       return Jwts.parserBuilder().setSigningKey(key()).build()
-            .parseClaimsJws(token).getBody().getExpiration();
+            .parseClaimsJws(token).getBody().getExpiration().getTime();
    }
 
    public String generateNewAccessToken(String username) {

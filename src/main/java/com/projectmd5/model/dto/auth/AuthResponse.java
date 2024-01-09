@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -18,9 +17,6 @@ public class AuthResponse {
    private String accessToken;
    private String refreshToken;
    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-   private Date expiredAt;
+   private Long expiredAt;
    private List<String> roles;
-
-   public AuthResponse(String accessToken) {
-   }
 }

@@ -42,19 +42,19 @@ public class AuthController {
    }
 
    @PostMapping(REFRESH_TOKEN)
-   public ResponseEntity<?> refreshToken(RefreshTokenRequest request) {
+   public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
       String username = jwtBuilder.getUserNameFromToken(request.getRefreshToken());
       if (!authService.isUsernameExisted(username)) {
          return ResponseEntity.badRequest()
                .body(new MessageResponse("Invalid refresh token"));
       }
       if (jwtBuilder.isTokenExpired(request.getRefreshToken())) {
-         return ResponseEntity.badRequest()
-               .body(new MessageResponse("Refresh token is expired"));
+         return new ResponseEntity<>(new MessageResponse("Refresh token is expired"),
+               HttpStatus.FORBIDDEN);
       }
 
       String newAccessToken = jwtBuilder.generateNewAccessToken(username);
-      AuthResponse authResponse = new AuthResponse(newAccessToken);
-      return ResponseEntity.ok().body(authResponse);
+      AuthResponse response = AuthResponse.builder().accessToken(newAccessToken).build();
+      return ResponseEntity.ok().body(response);
    }
 }
