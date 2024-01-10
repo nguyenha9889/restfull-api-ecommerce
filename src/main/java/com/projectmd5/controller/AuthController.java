@@ -43,10 +43,14 @@ public class AuthController {
 
    @PostMapping(REFRESH_TOKEN)
    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
+      if (request.getRefreshToken() == null || request.getRefreshToken().isEmpty()) {
+         return ResponseEntity.badRequest()
+               .body(new MessageResponse("Refresh token is null or empty"));
+      }
       String username = jwtBuilder.getUserNameFromToken(request.getRefreshToken());
       if (!authService.isUsernameExisted(username)) {
-         return ResponseEntity.badRequest()
-               .body(new MessageResponse("Invalid refresh token"));
+         return new ResponseEntity<>(new MessageResponse("Invalid refresh token"),
+               HttpStatus.UNAUTHORIZED);
       }
       if (jwtBuilder.isTokenExpired(request.getRefreshToken())) {
          return new ResponseEntity<>(new MessageResponse("Refresh token is expired"),

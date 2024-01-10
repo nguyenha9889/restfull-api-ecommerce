@@ -30,7 +30,7 @@ public class CategoryController {
    @GetMapping(CATEGORIES)
    public ResponseEntity<?> getList(
          @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
+         @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
          @RequestParam(value = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
          @RequestParam(value = "sortDir", defaultValue = "dsc", required = false) String sortDir,
          @RequestParam(value = "categoryName", defaultValue = "", required = false) String name
@@ -49,7 +49,7 @@ public class CategoryController {
       Category cate = categoryService.findById(categoryId);
       return ResponseEntity.ok(cate);
    }
-   @PostMapping
+   @PostMapping(CATEGORIES)
    public ResponseEntity<?> addCategory(@RequestBody CategoryRequest cateRequest,
                                         BindingResult bindingResult) {
       validator.validate(cateRequest, bindingResult);

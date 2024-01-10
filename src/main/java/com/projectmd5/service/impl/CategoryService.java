@@ -4,7 +4,6 @@ import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.dto.category.CatPageResponse;
 import com.projectmd5.model.entity.Category;
-import com.projectmd5.model.entity.Product;
 import com.projectmd5.repository.ICategoryRepository;
 import com.projectmd5.service.ICategoryService;
 import lombok.RequiredArgsConstructor;
