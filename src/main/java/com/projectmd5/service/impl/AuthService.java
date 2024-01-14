@@ -79,6 +79,7 @@ public class AuthService implements IAuthService {
       Long expiredAt = jwtBuilder.getExpiredFromToken(refreshToken);
       return AuthResponse.builder()
             .userId(userDetail.getId())
+            .fullName(userDetail.getFullName())
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .expiredAt(expiredAt)

@@ -1,5 +1,7 @@
 package com.projectmd5.controller.admin;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.category.CatPageResponse;
 import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.entity.Category;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.projectmd5.constants.MessageConstant.CATEGORY_NOT_FOUND;
 import static com.projectmd5.constants.PathConstant.*;
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 
@@ -29,11 +32,11 @@ public class CategoryController {
 
    @GetMapping(CATEGORIES)
    public ResponseEntity<?> getList(
-         @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-         @RequestParam(value = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
-         @RequestParam(value = "sortDir", defaultValue = "dsc", required = false) String sortDir,
-         @RequestParam(value = "categoryName", defaultValue = "", required = false) String name
+         @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+         @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
+         @RequestParam(name = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
+         @RequestParam(name = "sortDir", defaultValue = "dsc", required = false) String sortDir,
+         @RequestParam(name = "categoryName", defaultValue = "", required = false) String name
    ){
       CatPageResponse catPageResponse = null;
       if (Objects.equals(name, "") || name.isBlank()){
@@ -45,8 +48,13 @@ public class CategoryController {
    }
 
    @GetMapping(CATEGORY_ID)
-   public ResponseEntity<?> getCategory(@PathVariable Long categoryId){
-      Category cate = categoryService.findById(categoryId);
+   public ResponseEntity<?> getCategory(@PathVariable String categoryId){
+      Category cate = categoryService.findById(Long.parseLong(categoryId));
+      if (cate == null){
+         return new ResponseEntity<>(
+               new MessageResponse(CATEGORY_NOT_FOUND),
+               HttpStatus.NOT_FOUND);
+      }
       return ResponseEntity.ok(cate);
    }
    @PostMapping(CATEGORIES)
@@ -66,14 +74,27 @@ public class CategoryController {
    }
 
    @PutMapping(CATEGORY_ID)
-   public ResponseEntity<?> updateCategory(@PathVariable Long categoryId, @Valid @RequestBody CategoryRequest cateDTO){
-      Category cateUpdate = categoryService.update(categoryId, cateDTO);
+   public ResponseEntity<?> updateCategory(@PathVariable String categoryId, @Valid @RequestBody CategoryRequest cateDTO){
+      Category cate = categoryService.findById(Long.parseLong(categoryId));
+      if (cate == null){
+         return new ResponseEntity<>(
+               new MessageResponse(CATEGORY_NOT_FOUND),
+               HttpStatus.NOT_FOUND);
+      }
+
+      Category cateUpdate = categoryService.update(Long.parseLong(categoryId), cateDTO);
       return ResponseEntity.ok(cateUpdate);
    }
 
    @DeleteMapping(CATEGORY_ID)
-   public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId){
-      categoryService.delete(categoryId);
-      return ResponseEntity.ok(DELETE_SUCCESS);
+   public ResponseEntity<?> deleteCategory(@PathVariable String categoryId){
+      Category cate = categoryService.findById(Long.parseLong(categoryId));
+      if (cate == null){
+         return new ResponseEntity<>(
+               new MessageResponse(CATEGORY_NOT_FOUND),
+               HttpStatus.NOT_FOUND);
+      }
+      categoryService.delete(Long.parseLong(categoryId));
+      return ResponseEntity.ok(cate);
    }
 }

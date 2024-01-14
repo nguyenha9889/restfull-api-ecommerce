@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.projectmd5.constants.MessageConstant.CATEGORY_NOT_FOUND;
 
@@ -38,9 +39,8 @@ public class CategoryService implements ICategoryService {
 
    @Override
    public Category findById(Long id) {
-      return categoryRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException(CATEGORY_NOT_FOUND)
-      );
+      Optional<Category> optional = categoryRepository.findById(id);
+      return optional.orElse(null);
    }
 
    @Override
