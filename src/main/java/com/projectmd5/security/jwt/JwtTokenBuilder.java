@@ -1,6 +1,6 @@
 package com.projectmd5.security.jwt;
 
-import com.projectmd5.exception.BadRequestException;
+import com.projectmd5.exception.JWTException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -48,16 +48,9 @@ public class JwtTokenBuilder {
       try {
          Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token);
          return true;
-      } catch (SignatureException e) {
-         throw new BadRequestException("Invalid JWT signature" + e.getMessage());
-      } catch (MalformedJwtException e) {
-         throw new BadRequestException("Invalid JWT token" + e.getMessage());
-      } catch (ExpiredJwtException e) {
-         throw new BadRequestException("JWT token is expired" + e.getMessage());
-      } catch (UnsupportedJwtException e) {
-         throw new BadRequestException("JWT token is unsupported" + e.getMessage());
-      } catch (IllegalArgumentException e) {
-         throw new BadRequestException("JWT claims string is empty" + e.getMessage());
+      } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException |
+               IllegalArgumentException e) {
+         throw new JWTException(e.getMessage());
       }
 
    }

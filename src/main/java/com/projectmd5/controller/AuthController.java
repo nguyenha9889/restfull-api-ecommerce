@@ -44,10 +44,6 @@ public class AuthController {
    @PostMapping(REFRESH_TOKEN)
    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
       jwtBuilder.validateToken(request.getRefreshToken());
-      if (!jwtBuilder.validateToken(request.getRefreshToken())) {
-         return new ResponseEntity<>(new MessageResponse("JWT expired. Login again"),
-               HttpStatus.FORBIDDEN);
-      }
 
       String username = jwtBuilder.getUserNameFromToken(request.getRefreshToken());
       if (!authService.isUsernameExisted(username)) {

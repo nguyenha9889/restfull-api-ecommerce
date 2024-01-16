@@ -1,6 +1,6 @@
 package com.projectmd5.service.impl;
 
-import com.projectmd5.exception.BadRequestException;
+import com.projectmd5.exception.JWTException;
 import com.projectmd5.model.dto.auth.AuthResponse;
 import com.projectmd5.model.dto.auth.LoginRequest;
 import com.projectmd5.model.dto.auth.RegisterRequest;
@@ -70,7 +70,7 @@ public class AuthService implements IAuthService {
 
       // check account locked or enable
       if (!userDetail.isAccountNonLocked()){
-         throw new BadRequestException(USER_BLOCK);
+         throw new JWTException(USER_BLOCK);
       }
       List<String> roles = userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 

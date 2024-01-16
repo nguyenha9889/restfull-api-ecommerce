@@ -1,11 +1,10 @@
 package com.projectmd5.advice;
 
-import com.projectmd5.exception.BadRequestException;
+import com.projectmd5.exception.JWTException;
 import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.MessageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,11 +46,11 @@ public class ExceptionHandlerAdvice {
       return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
    }
 
-   @ExceptionHandler(BadRequestException.class)
-   public ResponseEntity<MessageResponse> handleBadRequestException(BadRequestException ex) {
+   @ExceptionHandler(JWTException.class)
+   public ResponseEntity<MessageResponse> handleBadRequestException(JWTException ex) {
       MessageResponse message = new MessageResponse(ex.getMessage());
 
-      return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
    }
 
    @ExceptionHandler(MaxUploadSizeExceededException.class)

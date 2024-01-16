@@ -1,6 +1,7 @@
 package com.projectmd5.controller;
 
-import com.projectmd5.exception.BadRequestException;
+import com.projectmd5.exception.JWTException;
+import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
@@ -8,6 +9,7 @@ import com.projectmd5.service.ICategoryService;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +31,9 @@ public class ClientController {
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
       Product product = productService.findById(productId);
       if (!product.getCategory().isStatus()){
-         throw new BadRequestException("This product belongs to the category that is currently inactive");
+         return new ResponseEntity<>(
+               new MessageResponse("This product belongs to the category that is currently inactive"),
+               HttpStatus.NOT_ACCEPTABLE);
       }
       return ResponseEntity.ok().body(product);
    }

@@ -1,6 +1,6 @@
 package com.projectmd5.service.impl;
 
-import com.projectmd5.exception.BadRequestException;
+import com.projectmd5.exception.JWTException;
 import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.user.*;
 import com.projectmd5.model.entity.Address;
@@ -81,7 +81,7 @@ public class AccountService implements IAccountService {
       if (isPasswordMatching) {
          user.setPassword(passwordEncoder.encode(request.getPassword()));
       } else {
-         throw new BadRequestException("Mật khẩu không chính xác");
+         throw new RuntimeException("Mật khẩu không chính xác");
       }
       user.setUpdatedAt(new Date());
       userRepository.save(user);
