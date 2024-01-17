@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Data
 @Builder
+@Table(name = "product_detail")
 public class ProductDetail {
    @Id
    @Column(length = 100)
-   @GeneratedValue(strategy = GenerationType.UUID)
    private String sku;
 
    @ManyToOne

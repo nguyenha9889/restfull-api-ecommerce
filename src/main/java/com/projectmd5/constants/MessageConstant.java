@@ -2,8 +2,8 @@ package com.projectmd5.constants;
 
 public class MessageConstant {
    public static final String USER_NOT_FOUND = "User not found";
-   public static final String PRODUCT_NOT_FOUND = "BaseProductResponse not found";
-   public static final String PRODUCT_DETAIL_NOT_FOUND = "BaseProductResponse detail not found";
+   public static final String PRODUCT_NOT_FOUND = "Product not found";
+   public static final String PRODUCT_DETAIL_NOT_FOUND = "Product detail not found";
    public static final String CATEGORY_NOT_FOUND = "Category not found";
    public static final String ORDER_NOT_FOUND = "Order not found";
    public static final String ROLE_NOT_FOUND = "Role not found";

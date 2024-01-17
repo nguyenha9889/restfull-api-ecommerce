@@ -27,13 +27,8 @@ public class ProductValidator implements Validator {
 
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "productName", FIELD_NOT_BLANK);
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", FIELD_NOT_BLANK);
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "unitPrice", PRICE_NOT_BLANK);
 
       if (!errors.hasFieldErrors()){
-         if (request.getUnitPrice().doubleValue() <= 0) {
-            errors.rejectValue("unitPrice", PRICE_RULE);
-         }
-
          if (productService.existProductName(request.getProductId(), request.getProductName())){
             errors.rejectValue("productName", PRODUCT_EXISTED);
          }

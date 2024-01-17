@@ -44,7 +44,7 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public CatPageResponse getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
+   public CatPageResponse getAllWithPaging(int pageNo, int pageSize, String sortBy, String sortDir) {
       Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
 

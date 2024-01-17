@@ -16,7 +16,6 @@ import java.util.List;
 @Data
 @Table(name = "product", uniqueConstraints = {
       @UniqueConstraint(columnNames = "productName"),
-      @UniqueConstraint(columnNames = "sku"),
 })
 public class Product {
    @Id

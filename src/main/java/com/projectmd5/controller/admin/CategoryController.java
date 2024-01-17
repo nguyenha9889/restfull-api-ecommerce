@@ -1,6 +1,5 @@
 package com.projectmd5.controller.admin;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.category.CatPageResponse;
 import com.projectmd5.model.dto.category.CategoryRequest;
@@ -20,7 +19,6 @@ import java.util.Objects;
 
 import static com.projectmd5.constants.MessageConstant.CATEGORY_NOT_FOUND;
 import static com.projectmd5.constants.PathConstant.*;
-import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,7 +38,7 @@ public class CategoryController {
    ){
       CatPageResponse catPageResponse = null;
       if (Objects.equals(name, "") || name.isBlank()){
-         catPageResponse = categoryService.getAll(pageNo, pageSize, sortBy, sortDir);
+         catPageResponse = categoryService.getAllWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok(catPageResponse);
       }
       catPageResponse = categoryService.search(name, pageNo, pageSize, sortBy, sortDir);

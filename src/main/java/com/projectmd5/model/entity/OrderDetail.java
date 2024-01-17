@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "order_detail")
 public class OrderDetail {
    @EmbeddedId
    private OrderDetailId orderDetailId;
