@@ -1,8 +1,10 @@
 package com.projectmd5.model.dto.product;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -11,46 +13,25 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductRequest {
+   @Setter
    private Long productId;
    private String productName;
+   @Setter
    private String sku;
    private String size;
    private String dough;
+   @Setter
    private String description;
+   @Setter
    private Long categoryId;
+   @Setter
    private BigDecimal unitPrice;
+   @Setter
    private MultipartFile image;
+   @Setter
    private String imagePath;
-
-   public void setProductId(Long productId) {
-      this.productId = productId;
-   }
 
    public void setProductName(String productName) {
       this.productName = productName.trim();
-   }
-
-   public void setSku(String sku) {
-      this.sku = sku;
-   }
-
-   public void setDescription(String description) {
-      this.description = description;
-   }
-
-   public void setCategoryId(Long categoryId) {
-      this.categoryId = categoryId;
-   }
-
-   public void setUnitPrice(BigDecimal unitPrice) {
-      this.unitPrice = unitPrice;
-   }
-
-   public void setImage(MultipartFile image) {
-      this.image = image;
-   }
-
-   public void setImagePath(String imagePath) {
-      this.imagePath = imagePath;
    }
 }

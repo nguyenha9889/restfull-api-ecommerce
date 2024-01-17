@@ -4,6 +4,8 @@ import com.projectmd5.model.dto.product.BaseProductResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.entity.Product;
+import com.projectmd5.model.entity.ProductDetail;
+import com.projectmd5.service.IProductDetailService;
 import com.projectmd5.service.IProductService;
 import com.projectmd5.validation.ProductValidator;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 public class ProductController {
 
    private final IProductService productService;
+   private final IProductDetailService productDetailService;
    private final ModelMapper modelMapper;
    private final ProductValidator validator;
 
@@ -43,7 +46,7 @@ public class ProductController {
 
    @GetMapping(PRODUCT_ID)
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
-      Product pro = productService.findById(productId);
+      com.projectmd5.model.entity.Product pro = productService.findById(productId);
       BaseProductResponse response = modelMapper.map(pro, BaseProductResponse.class);
       return ResponseEntity.ok(response);
    }
@@ -60,8 +63,10 @@ public class ProductController {
          return ResponseEntity.badRequest().body(errors);
       }
 
-      BaseProductResponse response = productService.add(proRequest);
-      return new ResponseEntity<>(response, HttpStatus.CREATED);
+      ProductDetail productDetail = productService.create(proRequest);
+      productDetailService.save(productDetail);
+
+      return new ResponseEntity<>("", HttpStatus.CREATED);
    }
 
    @PutMapping(PRODUCT_ID)

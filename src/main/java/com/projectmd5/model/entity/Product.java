@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 
 @Entity
@@ -28,25 +26,15 @@ public class Product {
    @Column(length = 100)
    private String productName;
 
-   @Column(length = 100)
-   @GeneratedValue(strategy = GenerationType.UUID)
-   private String sku = UUID.randomUUID().toString();
-
-   @Column(length = 100)
-   private String size;
-
-   @Column(length = 100)
-   private String dough;
-
    @Column(columnDefinition = "text")
    private String description;
+
+   @OneToMany(mappedBy = "product")
+   private List<ProductDetail> productDetail;
 
    @ManyToOne
    @JoinColumn(name = "categoryId")
    private Category category;
-
-   @Column(precision=10, scale=2)
-   private BigDecimal unitPrice;
 
    private String imagePath;
 

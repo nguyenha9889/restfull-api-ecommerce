@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductResponse extends BaseProductResponse{
+public class ProductResponse extends BaseProductResponse {
    private Date createdAt;
    private Date updatedAt;
 

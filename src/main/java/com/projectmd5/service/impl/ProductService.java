@@ -5,10 +5,13 @@ import com.projectmd5.model.dto.product.BaseProductResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.entity.Category;
+import com.projectmd5.model.entity.EProductSize;
 import com.projectmd5.model.entity.Product;
+import com.projectmd5.model.entity.ProductDetail;
 import com.projectmd5.repository.IProductRepository;
 import com.projectmd5.service.FilesStorageService;
 import com.projectmd5.service.ICategoryService;
+import com.projectmd5.service.IProductDetailService;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
 
@@ -33,36 +35,44 @@ public class ProductService implements IProductService {
    private final ICategoryService categoryService;
    private final FilesStorageService storageService;
    @Override
-   public List<Product> findAll() {
+   public List<com.projectmd5.model.entity.Product> findAll() {
       return productRepository.findAll();
    }
 
    @Override
-   public Product findById(Long id) {
+   public com.projectmd5.model.entity.Product findById(Long id) {
       return productRepository.findById(id).orElseThrow(
             () -> new ResourceNotFoundException(PRODUCT_NOT_FOUND)
       );
    }
 
    @Override
-   public BaseProductResponse add(ProductRequest proRequest) {
+   public ProductDetail create(ProductRequest proRequest) {
+
+      ProductDetail productDetail = ProductDetail.builder()
+            .size(EProductSize.valueOf(proRequest.getSize()))
+            .dough(proRequest.getDough())
+            .unitPrice(proRequest.getUnitPrice())
+            .build();
 
       String imagePath = storageService.uploadFile((proRequest.getImage()));
 
-      Product product = modelMapper.map(proRequest, Product.class);
+      Product product = new Product();
+      product.setProductName(proRequest.getProductName());
+      product.setCategory(categoryService.findById(proRequest.getCategoryId()));
+      product.getProductDetail().add(productDetail);
       product.setImagePath(imagePath);
-      product.setSku(UUID.randomUUID().toString());
+      product.setDescription(proRequest.getDescription());
       product.setCreatedAt(new Date());
-
       productRepository.save(product);
-      return modelMapper.map(product, BaseProductResponse.class);
+      return productDetail;
    }
 
    @Override
    public BaseProductResponse update(Long productId , ProductRequest proRequest) {
-      Product product = findById(productId);
+      com.projectmd5.model.entity.Product product = findById(productId);
 
-      Product proUpdate = modelMapper.map(proRequest, Product.class);
+      com.projectmd5.model.entity.Product proUpdate = modelMapper.map(proRequest, com.projectmd5.model.entity.Product.class);
       proUpdate.setProductId(productId);
 
       Category category = categoryService.findById(proRequest.getCategoryId());
@@ -82,7 +92,7 @@ public class ProductService implements IProductService {
 
    @Override
    public boolean existProductName(Long id, String name) {
-      for (Product p: findAll()) {
+      for (com.projectmd5.model.entity.Product p: findAll()) {
          if (p.getProductName().equalsIgnoreCase(name.trim())) {
             return !Objects.equals(p.getProductId(), id);
          }
@@ -97,7 +107,7 @@ public class ProductService implements IProductService {
 
    @Override
    public void delete(Long id) {
-      Product product = findById(id);
+      com.projectmd5.model.entity.Product product = findById(id);
       productRepository.delete(product);
    }
 
@@ -116,8 +126,8 @@ public class ProductService implements IProductService {
    @Override
    public ProPageResponse getAllWithPaging(Pageable pageable) {
 
-      Page<Product> pages = productRepository.findAll(pageable);
-      List<Product> data = pages.getContent();
+      Page<com.projectmd5.model.entity.Product> pages = productRepository.findAll(pageable);
+      List<com.projectmd5.model.entity.Product> data = pages.getContent();
 
       return ProPageResponse.builder()
             .products(data)
@@ -134,8 +144,8 @@ public class ProductService implements IProductService {
     */
    @Override
    public ProPageResponse getAllPublishWithPaging(Pageable pageable){
-      Page<Product> pages = productRepository.findAllByCategory_Status(true, pageable);
-      List<Product> data = pages.getContent();
+      Page<com.projectmd5.model.entity.Product> pages = productRepository.findAllByCategory_Status(true, pageable);
+      List<com.projectmd5.model.entity.Product> data = pages.getContent();
 
       return ProPageResponse.builder()
             .products(data)

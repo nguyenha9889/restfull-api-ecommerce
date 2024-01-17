@@ -34,7 +34,7 @@ public class CategoryController {
    public ResponseEntity<?> getList(
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
-         @RequestParam(name = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
+         @RequestParam(name = "sortBy", defaultValue = "category", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "dsc", required = false) String sortDir,
          @RequestParam(name = "categoryName", defaultValue = "", required = false) String name
    ){
