@@ -74,7 +74,17 @@ public class CategoryController {
    }
 
    @PutMapping(CATEGORY_ID)
-   public ResponseEntity<?> updateCategory(@PathVariable String categoryId, @Valid @RequestBody CategoryRequest cateDTO){
+   public ResponseEntity<?> updateCategory(@PathVariable String categoryId,
+                                           @Valid @RequestBody CategoryRequest cateRequest,
+                                           BindingResult bindingResult){
+      validator.validate(cateRequest, bindingResult);
+      if (bindingResult.hasErrors()){
+         Map<String, String> errors = new HashMap<>();
+         bindingResult.getFieldErrors().forEach(err ->
+               errors.put(err.getField(), err.getCode()));
+         return ResponseEntity.badRequest().body(errors);
+      }
+
       Category cate = categoryService.findById(Long.parseLong(categoryId));
       if (cate == null){
          return new ResponseEntity<>(
@@ -82,7 +92,7 @@ public class CategoryController {
                HttpStatus.NOT_FOUND);
       }
 
-      Category cateUpdate = categoryService.update(Long.parseLong(categoryId), cateDTO);
+      Category cateUpdate = categoryService.update(Long.parseLong(categoryId), cateRequest);
       return ResponseEntity.ok(cateUpdate);
    }
 
