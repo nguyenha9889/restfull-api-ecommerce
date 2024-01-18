@@ -48,7 +48,7 @@ public class ProductController {
       Product product = productService.findById(productId);
       return ResponseEntity.ok(product);
    }
-   @PostMapping(PRODUCT_ID)
+   @PostMapping(PRODUCTS)
    public ResponseEntity<?> addProduct(@ModelAttribute ProductRequest proRequest,
                                        BindingResult bindingResult) {
 

@@ -32,6 +32,11 @@ public class ProductValidator implements Validator {
          if (productService.existProductName(request.getProductId(), request.getProductName())){
             errors.rejectValue("productName", PRODUCT_EXISTED);
          }
+         request.getProductDetails().forEach(pDetail -> {
+            if (pDetail.getPrice() == null || pDetail.getPrice() <= 0){
+               errors.rejectValue("productDetails[].price", PRICE_RULE);
+            }
+         });
       }
 
       if (request.getImage() != null && request.getImage().getSize() > 0 && !isSupportedImageType(request.getImage())) {
