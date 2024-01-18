@@ -1,8 +1,7 @@
 package com.projectmd5.service.impl;
 
-import com.projectmd5.exception.ResourceNotFoundException;
-import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.dto.category.CatPageResponse;
+import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.repository.ICategoryRepository;
 import com.projectmd5.service.ICategoryService;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.projectmd5.constants.MessageConstant.CATEGORY_NOT_FOUND;
 
 
 @Service

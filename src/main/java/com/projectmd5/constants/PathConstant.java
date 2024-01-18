@@ -20,7 +20,7 @@ public class PathConstant {
    public static final String DELETE_BY_PRODUCT_ID = "/delete/{productId}";
    public static final String PRODUCT_ID = "/products/{productId}";
    public static final String CATEGORIES = "/categories";
-   public static final String CATEGORY_ID = "/categories/{category}";
+   public static final String CATEGORY_ID = "/categories/{categoryId}";
 
    public static final String USER = "/user";
    public static final String USER_ID = "/user/{userId}";
