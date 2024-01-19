@@ -27,7 +27,11 @@ public class MessageConstant {
    public static final String CONFIRM_PASSWORD_NOT_MATCH = "Mật khẩu nhập lại không chính xác";
 
    public static final String FIELD_NOT_BLANK = "Trường thông tin không được để trống";
+   public static final String CATEGORY_NULL = "Yêu cầu chọn danh mục";
    public static final String PRICE_RULE = "Giá sản phẩm phải lớn hơn 0";
+   public static final String PRICE_NULL = "Giá sản phẩm không được để trống";
+   public static final String FILE_NULL = "Yêu cầu chọn ảnh sản phẩm";
+   public static final String FILE_SIZE = "Hình ảnh sản phẩm không được vượt quá 1MB";
    public static final String FILE_UPLOAD_RULE = "Hỗ trợ định dạng ảnh png, jpg và jpeg";
    public static final String CATEGORY_EXISTED = "Danh mục đã tồn tại";
    public static final String PRODUCT_EXISTED = "Sản phẩm đã tồn tại";

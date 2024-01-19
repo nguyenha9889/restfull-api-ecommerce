@@ -29,7 +29,7 @@ public class Product {
    private String description;
 
    @OneToMany(mappedBy = "product")
-   private List<ProductDetail> productDetail;
+   private List<ProductDetail> productDetails;
 
    @ManyToOne
    @JoinColumn(name = "categoryId")

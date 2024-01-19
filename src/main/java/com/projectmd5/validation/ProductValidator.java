@@ -28,22 +28,37 @@ public class ProductValidator implements Validator {
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "productName", FIELD_NOT_BLANK);
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", FIELD_NOT_BLANK);
 
+      if (request.getCategoryId() == null){
+         errors.rejectValue("categoryId", CATEGORY_NULL);
+      }
+
+      if (request.getImage() == null || request.getImage().getSize() == 0 ){
+         errors.rejectValue("image", FILE_NULL);
+      }
+
+      if (request.getProductDetails() == null){
+         errors.rejectValue("productDetails", PRICE_NULL);
+      }
+
       if (!errors.hasFieldErrors()){
-         if (productService.existProductName(request.getProductId(), request.getProductName())){
+         if (productService.existProductName(request.getProductId(), request.getProductName())) {
             errors.rejectValue("productName", PRODUCT_EXISTED);
          }
-         request.getProductDetails().forEach(pDetail -> {
-            if (pDetail.getPrice() == null || pDetail.getPrice() <= 0){
-               errors.rejectValue("productDetails[].price", PRICE_RULE);
+
+         if (request.getImage().getSize() > 1024 * 1024){
+            errors.rejectValue("image", FILE_SIZE);
+         }
+         if (!isSupportedImageType(request.getImage())){
+            errors.rejectValue("image", FILE_UPLOAD_RULE);
+         }
+
+         request.getProductDetails().forEach(detailRequest -> {
+            if (detailRequest.getUnitPrice() == null || detailRequest.getUnitPrice().compareTo(0L) <= 0){
+               errors.rejectValue("unitPrice", PRICE_RULE);
             }
          });
       }
 
-      if (request.getImage() != null && request.getImage().getSize() > 0 && !isSupportedImageType(request.getImage())) {
-         errors.rejectValue("image", FILE_UPLOAD_RULE);
-      } else if (request.getImage() != null && request.getImage().getSize() > 1024*1024){
-         errors.rejectValue("image", "Dung lượng ảnh thấp hơn 1MB");
-      }
    }
 
    private boolean isSupportedImageType(MultipartFile image) {

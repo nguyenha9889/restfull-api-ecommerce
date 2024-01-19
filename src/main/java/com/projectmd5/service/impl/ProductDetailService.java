@@ -43,7 +43,7 @@ public class ProductDetailService implements IProductDetailService {
         productDetail.setProduct(productService.findById(productId));
         productDetail.setSize(EProductSize.valueOf(request.getSize()));
         productDetail.setDough(request.getDough());
-        productDetail.setUnitPrice(BigDecimal.valueOf(request.getPrice()));
+        productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
 
         save(productDetail);
         listProductDetail.add(productDetail);
@@ -60,7 +60,7 @@ public class ProductDetailService implements IProductDetailService {
          productDetail.setProduct(productService.findById(productId));
          productDetail.setSize(EProductSize.valueOf(request.getSize()));
          productDetail.setDough(request.getDough());
-         productDetail.setUnitPrice(BigDecimal.valueOf(request.getPrice()));
+         productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
 
          save(productDetail);
          listProductDetail.add(productDetail);

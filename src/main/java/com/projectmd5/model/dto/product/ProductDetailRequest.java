@@ -11,5 +11,5 @@ public class ProductDetailRequest {
    private String sku;
    private String size;
    private String dough;
-   private Long price;
+   private Long unitPrice;
 }

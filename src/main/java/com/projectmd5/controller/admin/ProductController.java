@@ -63,7 +63,7 @@ public class ProductController {
 
       Product product = productService.create(proRequest);
       List<ProductDetail> proDetail = productDetailService.create(product.getProductId(), proRequest);
-      product.setProductDetail(proDetail);
+      product.setProductDetails(proDetail);
       productService.save(product);
 
       return new ResponseEntity<>(product, HttpStatus.CREATED);
@@ -84,7 +84,7 @@ public class ProductController {
 
       Product product = productService.update(productId,proRequest);
       List<ProductDetail> proDetail = productDetailService.update(productId, proRequest);
-      product.setProductDetail(proDetail);
+      product.setProductDetails(proDetail);
       productService.save(product);
       return ResponseEntity.ok(product);
    }
