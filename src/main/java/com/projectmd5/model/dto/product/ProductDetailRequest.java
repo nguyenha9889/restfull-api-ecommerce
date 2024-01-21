@@ -1,10 +1,10 @@
 package com.projectmd5.model.dto.product;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailRequest {

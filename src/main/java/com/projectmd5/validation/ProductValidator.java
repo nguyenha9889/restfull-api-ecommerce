@@ -52,9 +52,9 @@ public class ProductValidator implements Validator {
             errors.rejectValue("image", FILE_UPLOAD_RULE);
          }
 
-         request.getProductDetails().forEach(detailRequest -> {
-            if (detailRequest.getUnitPrice() == null || detailRequest.getUnitPrice().compareTo(0L) <= 0){
-               errors.rejectValue("unitPrice", PRICE_RULE);
+         request.getProductDetails().forEach(productDetail -> {
+            if (productDetail.getUnitPrice() <= 0){
+               errors.rejectValue("productDetails", PRICE_RULE);
             }
          });
       }

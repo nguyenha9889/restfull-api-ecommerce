@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface IProductRepository extends JpaRepository<Product, Long> {
-   List<Product> findByProductNameEqualsIgnoreCaseOrDescription(String name, String description);
+   Page<Product> findByProductNameEqualsIgnoreCase(String name, Pageable pageable);
 
    Page<Product> findAllByCategory_Status(boolean status, Pageable pageable);
    List<Product> findAllByCategory_CategoryIdAndCategory_Status(Long categoryId, boolean status);

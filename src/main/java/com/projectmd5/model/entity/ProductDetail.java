@@ -1,5 +1,6 @@
 package com.projectmd5.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-
 
 @Entity
 @AllArgsConstructor
@@ -21,6 +21,7 @@ public class ProductDetail {
    private String sku;
 
    @ManyToOne
+   @JsonIgnore
    @JoinColumn(name = "productId")
    private Product product;
 

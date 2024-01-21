@@ -10,8 +10,10 @@ public class MessageConstant {
    public static final String ROLE_EXISTED = "Role is existed";
    public static final String USER_BLOCK = "This user is blocked";
    public static final String USER_ACTIVE = "This user is active";
+
    public static final String DELETE_SUCCESS = "Delete successfully";
    public static final String REGISTER_SUCCESS = "Register successfully";
+   public static final String CREATED_SUCCESS = "Register successfully";
 
    public static final String CREDENTIALS_INVALID = "Username hoặc mật khẩu không chính xác";
    public static final String USERNAME_NOT_BLANK = "Username không được để trống";

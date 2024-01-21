@@ -7,10 +7,7 @@ import com.projectmd5.validation.UsernameUnique;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import static com.projectmd5.constants.MessageConstant.*;
 
@@ -24,6 +21,7 @@ import static com.projectmd5.constants.MessageConstant.*;
 )
 @Builder
 public class RegisterRequest {
+   @Setter
    @NotBlank(message = FULLNAME_NOT_BLANK)
    private String fullName;
 
@@ -36,18 +34,17 @@ public class RegisterRequest {
    @EmailUnique
    private String email;
 
+   @Setter
    @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = PHONE_INVALID)
    @PhoneUnique
    private String phone;
 
+   @Setter
    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z]).{8,}$", message = PASSWORD_RULE)
    private String password;
 
+   @Setter
    private String confirmPassword;
-
-   public void setFullName(String fullName) {
-      this.fullName = fullName;
-   }
 
    public void setUsername(String username) {
       this.username = username.toLowerCase().trim();
@@ -57,15 +54,4 @@ public class RegisterRequest {
       this.email = email.toLowerCase().trim();
    }
 
-   public void setPhone(String phone) {
-      this.phone = phone.trim();
-   }
-
-   public void setPassword(String password) {
-      this.password = password;
-   }
-
-   public void setConfirmPassword(String confirmPassword) {
-      this.confirmPassword = confirmPassword;
-   }
 }

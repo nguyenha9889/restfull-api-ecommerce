@@ -31,14 +31,18 @@ public class CategoryController {
    @GetMapping(CATEGORIES)
    public ResponseEntity<?> getList(
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
+         @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
          @RequestParam(name = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "dsc", required = false) String sortDir,
          @RequestParam(name = "categoryName", defaultValue = "", required = false) String name
    ){
       CatPageResponse catPageResponse = null;
       if (Objects.equals(name, "") || name.isBlank()){
-         catPageResponse = categoryService.getAllWithPaging(pageNo, pageSize, sortBy, sortDir);
+         if (pageSize == 1) {
+            catPageResponse = categoryService.getAllWithPaging(pageNo, categoryService.findAll().size(), sortBy, sortDir);
+         } else {
+            catPageResponse = categoryService.getAllWithPaging(pageNo, pageSize, sortBy, sortDir);
+         }
          return ResponseEntity.ok(catPageResponse);
       }
       catPageResponse = categoryService.search(name, pageNo, pageSize, sortBy, sortDir);
@@ -46,8 +50,8 @@ public class CategoryController {
    }
 
    @GetMapping(CATEGORY_ID)
-   public ResponseEntity<?> getCategory(@PathVariable String categoryId){
-      Category cate = categoryService.findById(Long.parseLong(categoryId));
+   public ResponseEntity<?> getCategory(@PathVariable Long categoryId){
+      Category cate = categoryService.findById(categoryId);
       if (cate == null){
          return new ResponseEntity<>(
                new MessageResponse(CATEGORY_NOT_FOUND),
@@ -72,7 +76,7 @@ public class CategoryController {
    }
 
    @PutMapping(CATEGORY_ID)
-   public ResponseEntity<?> updateCategory(@PathVariable String categoryId,
+   public ResponseEntity<?> updateCategory(@PathVariable Long categoryId,
                                            @Valid @RequestBody CategoryRequest cateRequest,
                                            BindingResult bindingResult){
       validator.validate(cateRequest, bindingResult);
@@ -83,26 +87,26 @@ public class CategoryController {
          return ResponseEntity.badRequest().body(errors);
       }
 
-      Category cate = categoryService.findById(Long.parseLong(categoryId));
+      Category cate = categoryService.findById(categoryId);
       if (cate == null){
          return new ResponseEntity<>(
                new MessageResponse(CATEGORY_NOT_FOUND),
                HttpStatus.NOT_FOUND);
       }
 
-      Category cateUpdate = categoryService.update(Long.parseLong(categoryId), cateRequest);
+      Category cateUpdate = categoryService.update(cate, cateRequest);
       return ResponseEntity.ok(cateUpdate);
    }
 
    @DeleteMapping(CATEGORY_ID)
-   public ResponseEntity<?> deleteCategory(@PathVariable String categoryId){
-      Category cate = categoryService.findById(Long.parseLong(categoryId));
+   public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId){
+      Category cate = categoryService.findById(categoryId);
       if (cate == null){
          return new ResponseEntity<>(
                new MessageResponse(CATEGORY_NOT_FOUND),
                HttpStatus.NOT_FOUND);
       }
-      categoryService.delete(Long.parseLong(categoryId));
+      categoryService.delete(cate);
       return ResponseEntity.ok(cate);
    }
 }

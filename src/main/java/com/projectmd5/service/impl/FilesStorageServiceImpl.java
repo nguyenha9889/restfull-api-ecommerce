@@ -19,7 +19,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
    private final String bucketName = "demoupload-512c4.appspot.com";
    @Override
    public Storage getStorage() {
-      ClassPathResource serviceAccount = new ClassPathResource("firebase-upload.json");
+      ClassPathResource serviceAccount = new ClassPathResource("firebase-bucket.json");
       // Authenticate with Google Cloud using service account credentials
       // InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase-config.json");
       GoogleCredentials credentials = null;

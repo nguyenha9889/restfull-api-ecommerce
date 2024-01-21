@@ -1,5 +1,6 @@
 package com.projectmd5.controller.admin;
 
+import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.entity.Product;
@@ -8,7 +9,6 @@ import com.projectmd5.service.IProductDetailService;
 import com.projectmd5.service.IProductService;
 import com.projectmd5.validation.ProductValidator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
+import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
 import static com.projectmd5.constants.PathConstant.*;
 
 
@@ -33,22 +34,33 @@ public class ProductController {
 
    @GetMapping(PRODUCTS)
    public ResponseEntity<?> getList(
-         @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
-         @RequestParam(value = "sortBy", defaultValue = "productId", required = false) String sortBy,
-         @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+         @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+         @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
+         @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+         @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
+         @RequestParam(name = "productName", defaultValue = "", required = false) String name
    ){
-      Pageable pageable = productService.getPageable(pageNo, pageSize, sortBy, sortDir);
-      ProPageResponse response = productService.getAllWithPaging(pageable);
-      return ResponseEntity.ok(response);
+      ProPageResponse proPageResponse = null;
+      if (Objects.equals(name, "") || name.isBlank()){
+         proPageResponse = productService.getAllWithPaging(pageNo, pageSize, sortBy, sortDir);
+         return ResponseEntity.ok(proPageResponse);
+      }
+      proPageResponse = productService.searchWithPaging(name, pageNo, pageSize, sortBy, sortDir);
+      return ResponseEntity.ok(proPageResponse);
    }
 
    @GetMapping(PRODUCT_ID)
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
       Product product = productService.findById(productId);
+      if (product == null){
+         return new ResponseEntity<>(
+               new MessageResponse(PRODUCT_NOT_FOUND),
+               HttpStatus.NOT_FOUND);
+      }
       return ResponseEntity.ok(product);
    }
-   @PostMapping(PRODUCTS)
+
+   @PostMapping(value = PRODUCTS)
    public ResponseEntity<?> addProduct(@ModelAttribute ProductRequest proRequest,
                                        BindingResult bindingResult) {
 
@@ -62,7 +74,7 @@ public class ProductController {
       }
 
       Product product = productService.create(proRequest);
-      List<ProductDetail> proDetail = productDetailService.create(product.getProductId(), proRequest);
+      List<ProductDetail> proDetail = productDetailService.create(product, proRequest);
       product.setProductDetails(proDetail);
       productService.save(product);
 
@@ -82,8 +94,14 @@ public class ProductController {
          return ResponseEntity.badRequest().body(errors);
       }
 
-      Product product = productService.update(productId,proRequest);
-      List<ProductDetail> proDetail = productDetailService.update(productId, proRequest);
+      Product product = productService.findById(productId);
+      if (product == null){
+         return new ResponseEntity<>(
+               new MessageResponse(PRODUCT_NOT_FOUND),
+               HttpStatus.NOT_FOUND);
+      }
+      Product productUpdate = productService.update(product,proRequest);
+      List<ProductDetail> proDetail = productDetailService.update(productUpdate, proRequest);
       product.setProductDetails(proDetail);
       productService.save(product);
       return ResponseEntity.ok(product);
@@ -91,7 +109,13 @@ public class ProductController {
 
    @DeleteMapping(PRODUCT_ID)
    public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
-      productService.delete(productId);
-      return ResponseEntity.ok(DELETE_SUCCESS);
+      Product product = productService.findById(productId);
+      if (product == null){
+         return new ResponseEntity<>(
+               new MessageResponse(PRODUCT_NOT_FOUND),
+               HttpStatus.NOT_FOUND);
+      }
+      productService.delete(product);
+      return ResponseEntity.ok(product);
    }
 }

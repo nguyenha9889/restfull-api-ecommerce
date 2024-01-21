@@ -30,7 +30,7 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public List<Category> findByStatusTrue(){
+   public List<Category> findAllActive(){
       return categoryRepository.findAllByStatusIsTrue();
    }
 
@@ -65,8 +65,8 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public void delete(Long id) {
-      categoryRepository.delete(findById(id));
+   public void delete(Category category) {
+      categoryRepository.delete(category);
    }
 
    @Override
@@ -78,8 +78,7 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public Category update(Long categoryId, CategoryRequest categoryRequest) {
-      Category cate = findById(categoryId);
+   public Category update(Category cate, CategoryRequest categoryRequest) {
       cate.setCategoryName(categoryRequest.getCategoryName());
       cate.setDescription(categoryRequest.getDescription());
 

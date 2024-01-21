@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ProPageResponse {
-   List<Product> products;
+   List<Product> data;
    private int pageNo;
    private int pageSize;
    private long totalElements;
