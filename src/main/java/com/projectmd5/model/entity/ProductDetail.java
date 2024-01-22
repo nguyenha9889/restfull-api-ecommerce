@@ -2,18 +2,13 @@ package com.projectmd5.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
 @Table(name = "product_detail")
 public class ProductDetail {
    @Id
@@ -22,9 +17,11 @@ public class ProductDetail {
 
    @ManyToOne
    @JsonIgnore
+   @ToString.Exclude
    @JoinColumn(name = "productId")
    private Product product;
 
+   @Enumerated(EnumType.STRING)
    @Column(length = 100)
    private EProductSize size;
 

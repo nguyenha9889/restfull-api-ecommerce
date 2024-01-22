@@ -32,14 +32,9 @@ public class FilesStorageServiceImpl implements FilesStorageService {
    }
 
    @Override
-   public String getExtension(String originalFileName) {
-      return StringUtils.getFilenameExtension(originalFileName);
-   }
-
-   @Override
    public String generateFileName(String originalFileName) {
       DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-      return dtf.format(LocalDateTime.now())+ originalFileName +"."+ getExtension(originalFileName);
+      return dtf.format(LocalDateTime.now())+ originalFileName;
    }
 
    @Override

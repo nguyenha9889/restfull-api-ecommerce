@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FilesStorageService {
    Storage getStorage();
-   String getExtension(String originalFileName);
    String generateFileName(String originalFileName);
    String uploadFile(MultipartFile file);
 }

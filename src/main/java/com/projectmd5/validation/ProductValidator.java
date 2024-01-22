@@ -53,7 +53,7 @@ public class ProductValidator implements Validator {
          }
 
          request.getProductDetails().forEach(productDetail -> {
-            if (productDetail.getUnitPrice() <= 0){
+            if (productDetail.getUnitPrice() == null || productDetail.getUnitPrice() <= 0){
                errors.rejectValue("productDetails", PRICE_RULE);
             }
          });

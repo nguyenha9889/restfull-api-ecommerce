@@ -2,6 +2,7 @@ package com.projectmd5.service.impl;
 
 import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.product.ProductDetailRequest;
+import com.projectmd5.model.dto.product.ProductDetailResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.entity.EProductSize;
 import com.projectmd5.model.entity.Product;
@@ -38,17 +39,46 @@ public class ProductDetailService implements IProductDetailService {
       List<ProductDetail> productDetails = new ArrayList<>();
 
       for (ProductDetailRequest request : detailsRequest) {
-        ProductDetail productDetail = new ProductDetail();
-        productDetail.setSku(UUID.randomUUID().toString());
-        productDetail.setProduct(product);
-        productDetail.setSize(EProductSize.valueOf(request.getSize()));
-        productDetail.setDough(request.getDough());
-        productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
+         ProductDetail productDetail = new ProductDetail();
+         productDetail.setSku(UUID.randomUUID().toString());
+         productDetail.setProduct(product);
+         if (request.getSize() != null){
+            productDetail.setSize(EProductSize.valueOf(request.getSize()));
+         }
+         if (request.getDough() != null){
+            productDetail.setDough(request.getDough());
+         }
+         productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
 
-        save(productDetail);
+         save(productDetail);
          productDetails.add(productDetail);
       }
       return productDetails;
+   }
+
+   @Override
+   public List<ProductDetailResponse> mapperToDetailsResponse(List<ProductDetail> productDetails) {
+      List<ProductDetailResponse> responses = new ArrayList<>();
+      for (ProductDetail productDetail : productDetails) {
+         ProductDetailResponse detailResponse = ProductDetailResponse.builder()
+               .sku(productDetail.getSku())
+               .dough(productDetail.getDough())
+               .size(productDetail.getSize().name())
+               .unitPrice(productDetail.getUnitPrice().longValue())
+               .build();
+         responses.add(detailResponse);
+      }
+      return responses;
+   }
+
+   @Override
+   public List<ProductDetail> deleteProductDetailsByProductId(Long productId) {
+      List<ProductDetail> productDetails = productDetailRepo.findProductDetailsByProduct_ProductId(productId);
+      if (productDetails != null){
+         productDetailRepo.deleteAll(productDetails);
+         return productDetails;
+      }
+      return null;
    }
 
    @Override
@@ -59,8 +89,12 @@ public class ProductDetailService implements IProductDetailService {
       for (ProductDetailRequest request : detailsRequest) {
          ProductDetail productDetail = findById(request.getSku());
          productDetail.setProduct(product);
-         productDetail.setSize(EProductSize.valueOf(request.getSize()));
-         productDetail.setDough(request.getDough());
+         if (request.getSize() != null){
+            productDetail.setSize(EProductSize.valueOf(request.getSize()));
+         }
+         if (request.getDough() != null){
+            productDetail.setDough(request.getDough());
+         }
          productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
 
          save(productDetail);

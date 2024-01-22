@@ -4,11 +4,13 @@ import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
+import com.projectmd5.model.entity.ProductDetail;
 import com.projectmd5.repository.IProductRepository;
 import com.projectmd5.service.FilesStorageService;
 import com.projectmd5.service.ICategoryService;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ public class ProductService implements IProductService {
    private final IProductRepository productRepository;
    private final ICategoryService categoryService;
    private final FilesStorageService storageService;
+   private final ModelMapper mapper;
    @Override
    public List<Product> findAll() {
       return productRepository.findAll();
@@ -39,14 +42,12 @@ public class ProductService implements IProductService {
 
    @Override
    public Product create(ProductRequest proRequest) {
-
-      String imagePath = storageService.uploadFile((proRequest.getImage()));
-      Product product = new Product();
-      product.setProductName(proRequest.getProductName());
+      Product product = mapper.map(proRequest, Product.class);
       product.setCategory(categoryService.findById(proRequest.getCategoryId()));
+      String imagePath = storageService.uploadFile((proRequest.getImage()));
       product.setImagePath(imagePath);
-      product.setDescription(proRequest.getDescription());
       product.setCreatedAt(new Date());
+      product.setUpdatedAt(new Date());
       return productRepository.save(product);
    }
 

@@ -2,13 +2,16 @@ package com.projectmd5.controller.admin;
 
 import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
+import com.projectmd5.model.dto.product.ProductDetailResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
+import com.projectmd5.model.dto.product.ProductResponse;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.model.entity.ProductDetail;
 import com.projectmd5.service.IProductDetailService;
 import com.projectmd5.service.IProductService;
 import com.projectmd5.validation.ProductValidator;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,12 +34,13 @@ public class ProductController {
    private final IProductService productService;
    private final IProductDetailService productDetailService;
    private final ProductValidator validator;
+   private final ModelMapper mapper;
 
    @GetMapping(PRODUCTS)
    public ResponseEntity<?> getList(
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
-         @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+         @RequestParam(name = "sortBy", defaultValue = "updatedAt", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
          @RequestParam(name = "productName", defaultValue = "", required = false) String name
    ){
@@ -74,11 +78,14 @@ public class ProductController {
       }
 
       Product product = productService.create(proRequest);
-      List<ProductDetail> proDetail = productDetailService.create(product, proRequest);
-      product.setProductDetails(proDetail);
+      List<ProductDetail> proDetails = productDetailService.create(product, proRequest);
+      product.setProductDetails(proDetails);
       productService.save(product);
 
-      return new ResponseEntity<>(product, HttpStatus.CREATED);
+      ProductResponse response = mapper.map(product, ProductResponse.class);
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetails);
+      response.setProductDetails(detailResponses);
+      return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
 
    @PutMapping(PRODUCT_ID)
@@ -104,7 +111,11 @@ public class ProductController {
       List<ProductDetail> proDetail = productDetailService.update(productUpdate, proRequest);
       product.setProductDetails(proDetail);
       productService.save(product);
-      return ResponseEntity.ok(product);
+
+      ProductResponse response = mapper.map(product, ProductResponse.class);
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetail);
+      response.setProductDetails(detailResponses);
+      return ResponseEntity.ok(response);
    }
 
    @DeleteMapping(PRODUCT_ID)
@@ -115,7 +126,15 @@ public class ProductController {
                new MessageResponse(PRODUCT_NOT_FOUND),
                HttpStatus.NOT_FOUND);
       }
+
+      List<ProductDetail> proDetail = productDetailService.deleteProductDetailsByProductId(productId);
+      product.setProductDetails(proDetail);
+
+      ProductResponse response = mapper.map(product, ProductResponse.class);
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetail);
+      response.setProductDetails(detailResponses);
+
       productService.delete(product);
-      return ResponseEntity.ok(product);
+      return ResponseEntity.ok(response);
    }
 }

@@ -2,15 +2,14 @@ package com.projectmd5.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 @Table(name = "category", uniqueConstraints = {
       @UniqueConstraint(columnNames = "categoryName"),
@@ -29,6 +28,7 @@ public class Category {
    private boolean status;
 
    @JsonIgnore
+   @ToString.Exclude
    @OneToMany(mappedBy = "category")
    private List<Product> products;
 }
