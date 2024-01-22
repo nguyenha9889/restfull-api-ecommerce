@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
 import static com.projectmd5.constants.PathConstant.*;
 
@@ -61,7 +62,11 @@ public class ProductController {
                new MessageResponse(PRODUCT_NOT_FOUND),
                HttpStatus.NOT_FOUND);
       }
-      return ResponseEntity.ok(product);
+      List<ProductDetail> proDetails = product.getProductDetails();
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetails);
+      ProductResponse response = mapper.map(product, ProductResponse.class);
+      response.setProductDetails(detailResponses);
+      return ResponseEntity.ok(response);
    }
 
    @PostMapping(value = PRODUCTS)
@@ -135,6 +140,6 @@ public class ProductController {
       response.setProductDetails(detailResponses);
 
       productService.delete(product);
-      return ResponseEntity.ok(response);
+      return ResponseEntity.ok(DELETE_SUCCESS);
    }
 }

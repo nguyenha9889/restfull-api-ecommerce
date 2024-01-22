@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.projectmd5.constants.MessageConstant.CATEGORY_NOT_FOUND;
+import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 import static com.projectmd5.constants.PathConstant.*;
 
 @RequiredArgsConstructor
@@ -107,6 +108,6 @@ public class CategoryController {
                HttpStatus.NOT_FOUND);
       }
       categoryService.delete(cate);
-      return ResponseEntity.ok(cate);
+      return ResponseEntity.ok(DELETE_SUCCESS);
    }
 }

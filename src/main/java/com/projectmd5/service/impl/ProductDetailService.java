@@ -60,12 +60,16 @@ public class ProductDetailService implements IProductDetailService {
    public List<ProductDetailResponse> mapperToDetailsResponse(List<ProductDetail> productDetails) {
       List<ProductDetailResponse> responses = new ArrayList<>();
       for (ProductDetail productDetail : productDetails) {
-         ProductDetailResponse detailResponse = ProductDetailResponse.builder()
-               .sku(productDetail.getSku())
-               .dough(productDetail.getDough())
-               .size(productDetail.getSize().name())
-               .unitPrice(productDetail.getUnitPrice().longValue())
-               .build();
+         ProductDetailResponse detailResponse = new ProductDetailResponse();
+         detailResponse.setSku(productDetail.getSku());
+         if (productDetail.getSize() != null){
+            detailResponse.setSize(productDetail.getSize().name());
+         }
+         if (productDetail.getDough() != null){
+            detailResponse.setDough(productDetail.getDough());
+         }
+         detailResponse.setUnitPrice(productDetail.getUnitPrice().longValue());
+
          responses.add(detailResponse);
       }
       return responses;
