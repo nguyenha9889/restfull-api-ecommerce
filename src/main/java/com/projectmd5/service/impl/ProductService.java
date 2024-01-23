@@ -1,10 +1,11 @@
 package com.projectmd5.service.impl;
 
 import com.projectmd5.model.dto.product.ProPageResponse;
+import com.projectmd5.model.dto.product.ProductDetailResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
+import com.projectmd5.model.dto.product.ProductResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
-import com.projectmd5.model.entity.ProductDetail;
 import com.projectmd5.repository.IProductRepository;
 import com.projectmd5.service.FilesStorageService;
 import com.projectmd5.service.ICategoryService;
@@ -28,6 +29,7 @@ public class ProductService implements IProductService {
    private final IProductRepository productRepository;
    private final ICategoryService categoryService;
    private final FilesStorageService storageService;
+   private final ProductDetailService productDetailService;
    private final ModelMapper mapper;
    @Override
    public List<Product> findAll() {
@@ -91,14 +93,13 @@ public class ProductService implements IProductService {
     */
    @Override
    public ProPageResponse getAllWithPaging(int pageNo, int pageSize, String sortBy, String sortDir) {
-      Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-      Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+      Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
 
       Page<Product> pages = productRepository.findAll(pageable);
-      List<Product> data = pages.getContent();
-
+      List<Product> productList = pages.getContent();
+      List<ProductResponse> data = productList.stream()
+            .map(this::mapperToProductResponse)
+            .toList();
       return ProPageResponse.builder()
             .data(data)
             .pageNo(pageable.getPageNumber())
@@ -108,15 +109,31 @@ public class ProductService implements IProductService {
             .last(pages.isLast())
             .build();
    }
-@Override
-   public ProPageResponse searchWithPaging(String name, int pageNo, int pageSize, String sortBy, String sortDir){
+
+   private ProductResponse mapperToProductResponse(Product product){
+      ProductResponse productResponse = mapper.map(product, ProductResponse.class);
+      productResponse.setCategory(product.getCategory());
+      List<ProductDetailResponse>  detailsResponse = productDetailService.mapperToDetailsResponse(product.getProductDetails());
+      productResponse.setProductDetails(detailsResponse);
+      return productResponse;
+   }
+
+   private Pageable createPageable(int pageNo, int pageSize, String sortBy, String sortDir){
       Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
             ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
-      Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+      return PageRequest.of(pageNo, pageSize, sort);
+   }
+
+@Override
+   public ProPageResponse searchWithPaging(String name, int pageNo, int pageSize, String sortBy, String sortDir){
+      Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
 
       Page<Product> pages = productRepository.findByProductNameEqualsIgnoreCase(name, pageable);
-      List<Product> data = pages.getContent();
+      List<Product> productList = pages.getContent();
+      List<ProductResponse> data = productList.stream()
+         .map(this::mapperToProductResponse)
+         .toList();
 
       return ProPageResponse.builder()
             .data(data)
@@ -128,18 +145,18 @@ public class ProductService implements IProductService {
             .build();
    }
 
+   //======================================CLIENT FEATURES======================================
    /**
     * Lấy danh sách sản phẩm trong những danh mục có trạng thái active, phân trang và sắp xếp
     */
    @Override
    public ProPageResponse getAllPublishWithPaging(int pageNo, int pageSize, String sortBy, String sortDir){
-      Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-      Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
-      Page<Product> pages = productRepository.findAllByCategory_Status(true, pageable);
-      List<Product> data = pages.getContent();
+      Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
+      Page<Product> pages = productRepository.findAllByCategoryIsTrue(pageable);
+      List<Product> productList = pages.getContent();
+      List<ProductResponse> data = productList.stream()
+            .map(this::mapperToProductResponse)
+            .toList();
 
       return ProPageResponse.builder()
             .data(data)
@@ -151,30 +168,47 @@ public class ProductService implements IProductService {
             .build();
    }
 
-   /**
-    * Lấy danh sách sản phẩm trong những danh mục có trạng thái active
-    */
    @Override
-   public List<Product> getAllPublish(){
-      return findAll().stream().filter(p-> p.getCategory().isStatus()).toList();
+   public ProPageResponse searchByNameOrDescription(String name, int pageNo, int pageSize, String sortBy, String sortDir) {
+      Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
+      Page<Product> pages = productRepository.findAllByProductNameOrDescriptionAndCategoryIsTrue(name, name, pageable);
+      List<Product> productList = pages.getContent();
+
+      List<ProductResponse> data = productList.stream()
+            .map(this::mapperToProductResponse)
+            .toList();
+
+      return ProPageResponse.builder()
+            .data(data)
+            .pageNo(pageable.getPageNumber())
+            .pageSize(pageable.getPageSize())
+            .totalElements(pages.getTotalElements())
+            .totalPages(pages.getTotalPages())
+            .last(pages.isLast())
+            .build();
    }
 
-   /**
-    * Tìm các sản phẩm theo category có trạng thái active
-    */
    @Override
-   public List<Product> getAllByCategoryActive(Long categoryId) {
+   public ProPageResponse searchAllByCategory(Long categoryId, int pageNo, int pageSize, String sortBy, String sortDir) {
+      Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
       Category category = categoryService.findById(categoryId);
-      return productRepository.findAllByCategory_CategoryIdAndCategory_Status(categoryId, true);
-   }
+      if (category == null){
+         return null;
+      }
+      Page<Product> pages = productRepository.findAllByCategoryAndCategoryIsTrue(category, pageable);
+      List<Product> productList = pages.getContent();
 
-   /**
-    * Lấy ra 5 sản phẩm mới nhất (sắp xếp theo createdAt)
-    */
-   @Override
-   public List<Product> getCreatedList(){
-      Pageable pageable = PageRequest.of(0, 5, Sort.by("createdAt").descending());
-      Page<Product> pages = productRepository.findAllByCategory_Status(true, pageable);
-      return pages.getContent();
+      List<ProductResponse> data = productList.stream()
+            .map(this::mapperToProductResponse)
+            .toList();
+
+      return ProPageResponse.builder()
+            .data(data)
+            .pageNo(pageable.getPageNumber())
+            .pageSize(pageable.getPageSize())
+            .totalElements(pages.getTotalElements())
+            .totalPages(pages.getTotalPages())
+            .last(pages.isLast())
+            .build();
    }
 }
