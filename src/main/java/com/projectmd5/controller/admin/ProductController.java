@@ -43,14 +43,14 @@ public class ProductController {
          @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
          @RequestParam(name = "sortBy", defaultValue = "updatedAt", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
-         @RequestParam(name = "productName", defaultValue = "", required = false) String name
+         @RequestParam(name = "search", defaultValue = "", required = false) String query
    ){
       ProPageResponse proPageResponse = null;
-      if (Objects.equals(name, "") || name.isBlank()){
+      if (Objects.equals(query, "") || query.isBlank()){
          proPageResponse = productService.getAllWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok(proPageResponse);
       }
-      proPageResponse = productService.searchWithPaging(name, pageNo, pageSize, sortBy, sortDir);
+      proPageResponse = productService.searchWithPaging(query, pageNo, pageSize, sortBy, sortDir);
       return ResponseEntity.ok(proPageResponse);
    }
 

@@ -35,7 +35,7 @@ public class CategoryController {
          @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
          @RequestParam(name = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "dsc", required = false) String sortDir,
-         @RequestParam(name = "categoryName", defaultValue = "", required = false) String name
+         @RequestParam(name = "search", defaultValue = "", required = false) String name
    ){
       CatPageResponse catPageResponse = null;
       if (Objects.equals(name, "") || name.isBlank()){
