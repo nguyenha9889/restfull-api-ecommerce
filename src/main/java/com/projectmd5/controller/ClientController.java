@@ -3,6 +3,7 @@ package com.projectmd5.controller;
 import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.category.ListCateResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
+import com.projectmd5.model.dto.product.ProductResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.service.ICategoryService;
@@ -15,16 +16,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
+import static com.projectmd5.constants.PathConstant.API_V1;
+import static com.projectmd5.constants.PathConstant.CATEGORIES;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api.myservice.com/v1")
+@RequestMapping(API_V1)
 public class ClientController {
    private final ICategoryService categoryService;
    private final IProductService productService;
-   @GetMapping("/categories")
+   @GetMapping(CATEGORIES)
    public ResponseEntity<?> getCategories(){
-      List<Category> categories = categoryService.findAllActive();
+      List<Category> categories = categoryService.findAllPublish();
       ListCateResponse response = ListCateResponse.builder()
             .data(categories)
             .totalElements(categories.size())
@@ -36,7 +39,7 @@ public class ClientController {
    @GetMapping("/products")
    public ResponseEntity<?> getPublishProduct(
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
+         @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
          @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String query
@@ -57,7 +60,8 @@ public class ClientController {
                new MessageResponse("This product belongs to the category that is currently inactive"),
                HttpStatus.NOT_ACCEPTABLE);
       }
-      return ResponseEntity.ok().body(product);
+      ProductResponse response = productService.mapperToProductResponse(product);
+      return ResponseEntity.ok().body(response);
    }
 
    // Danh sách sản phẩm mới nhất
