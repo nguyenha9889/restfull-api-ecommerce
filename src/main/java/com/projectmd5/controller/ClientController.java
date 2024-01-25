@@ -3,6 +3,7 @@ package com.projectmd5.controller;
 import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.category.ListCateResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
+import com.projectmd5.model.dto.product.ProductResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.service.ICategoryService;
@@ -23,9 +24,11 @@ import static com.projectmd5.constants.PathConstant.*;
 public class ClientController {
    private final ICategoryService categoryService;
    private final IProductService productService;
+
+   // Danh sách danh mục được bán
    @GetMapping(CATEGORIES)
    public ResponseEntity<?> getCategories(){
-      List<Category> categories = categoryService.findAllActive();
+      List<Category> categories = categoryService.findAllPublish();
       ListCateResponse response = ListCateResponse.builder()
             .data(categories)
             .totalElements(categories.size())
@@ -33,20 +36,21 @@ public class ClientController {
       return ResponseEntity.ok().body(response);
    }
 
-   // Danh sách sản phẩm được bán, tim kiếm theo tên sản phẩm hoặc tên mô tả
+   // List sản phẩm được bán hoặc list tim kiếm theo tên / mô tả hoặc list sản phẩm mới nhất
    @GetMapping(PRODUCTS)
    public ResponseEntity<?> getPublishProduct(
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
-         @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+         @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
+         @RequestParam(name = "sortBy", defaultValue = "createdAt", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String query
    ){
+      ProPageResponse response = null;
       if (query.isEmpty()){
-         ProPageResponse response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
+         response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok().body(response);
       }
-      ProPageResponse response = productService.searchByNameOrDescription(query ,pageNo, pageSize, sortBy, sortDir);
+      response = productService.searchByNameOrDescription(query ,pageNo, pageSize, sortBy, sortDir);
       return ResponseEntity.ok().body(response);
    }
 
@@ -58,23 +62,12 @@ public class ClientController {
                new MessageResponse("This product belongs to the category that is currently inactive"),
                HttpStatus.NOT_ACCEPTABLE);
       }
-      return ResponseEntity.ok().body(product);
-   }
-
-   // Danh sách sản phẩm mới nhất
-   @GetMapping("/products/new-products")
-   public ResponseEntity<?> getNewProducts(
-         @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
-         @RequestParam(name = "sortBy", defaultValue = "createdAt", required = false) String sortBy,
-         @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir
-   ){
-      ProPageResponse response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
+      ProductResponse response = productService.mapperToProductResponse(product);
       return ResponseEntity.ok().body(response);
    }
 
    // Tìm các sản phẩm theo category
-   @GetMapping("/products/categories/{categoryId}")
+   @GetMapping(PRODUCT_CATEGORY_ID)
    public ResponseEntity<?> getProductByCategory(
          @PathVariable Long categoryId,
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,

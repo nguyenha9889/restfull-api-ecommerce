@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ICategoryService extends IGenericService<Category, Long> {
    CatPageResponse getAllWithPaging(int pageNo, int pageSize, String sortBy, String sortDir);
-   List<Category> findAllActive();
+   List<Category> findAllPublish();
    Category add(CategoryRequest cateRequest);
    Category update(Category category, CategoryRequest cateRequest);
    boolean existCategoryName(Long id, String name);

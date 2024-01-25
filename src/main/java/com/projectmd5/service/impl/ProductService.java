@@ -110,7 +110,8 @@ public class ProductService implements IProductService {
             .build();
    }
 
-   private ProductResponse mapperToProductResponse(Product product){
+   @Override
+   public ProductResponse mapperToProductResponse(Product product){
       ProductResponse productResponse = mapper.map(product, ProductResponse.class);
       productResponse.setCategory(product.getCategory());
       List<ProductDetailResponse>  detailsResponse = productDetailService.mapperToDetailsResponse(product.getProductDetails());

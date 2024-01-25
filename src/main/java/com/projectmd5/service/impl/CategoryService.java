@@ -30,11 +30,6 @@ public class CategoryService implements ICategoryService {
    }
 
    @Override
-   public List<Category> findAllActive(){
-      return categoryRepository.findAllByStatusIsTrue();
-   }
-
-   @Override
    public Category findById(Long id) {
       Optional<Category> optional = categoryRepository.findById(id);
       return optional.orElse(null);
@@ -115,5 +110,12 @@ public class CategoryService implements ICategoryService {
             .totalPages(pages.getTotalPages())
             .last(pages.isLast())
             .build();
+   }
+
+   //=======================================CLIENT=================================================
+   @Override
+   public List<Category> findAllPublish(){
+      List<Category> activeList = categoryRepository.findAllByStatusIsTrue();
+      return activeList.stream().filter(c -> !c.getProducts().isEmpty()).toList();
    }
 }
