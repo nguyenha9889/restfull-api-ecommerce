@@ -8,7 +8,6 @@ public class PathConstant {
    public static final String REGISTER = "/sign-up";
    public static final String LOGIN = "/sign-in";
    public static final String LOGOUT = "/sign-out";
-   public static final String API_V1_USERS = "/api.myservice.com/v1/users";
    public static final String REFRESH_TOKEN = "/refresh-token";
    public static final String FORGOT_EMAIL = "/forgot/{email}";
    public static final String RESET = "/reset";
@@ -17,6 +16,7 @@ public class PathConstant {
    public static final String USER_ADDRESS_FULL = "/user/address/{userId}";
 
    public static final String PRODUCTS = "/products";
+   public static final String PRODUCT_CATEGORY_ID = "/products/categories/{categoryId}";
    public static final String DELETE_BY_PRODUCT_ID = "/delete/{productId}";
    public static final String PRODUCT_ID = "/products/{productId}";
    public static final String CATEGORIES = "/categories";

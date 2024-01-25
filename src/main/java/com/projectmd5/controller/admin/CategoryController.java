@@ -34,7 +34,7 @@ public class CategoryController {
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
          @RequestParam(name = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
-         @RequestParam(name = "sortDir", defaultValue = "dsc", required = false) String sortDir,
+         @RequestParam(name = "sortDir", defaultValue = "desc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String name
    ){
       CatPageResponse catPageResponse = null;

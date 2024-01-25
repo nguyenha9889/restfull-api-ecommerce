@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
-import static com.projectmd5.constants.PathConstant.API_V1;
-import static com.projectmd5.constants.PathConstant.CATEGORIES;
+import static com.projectmd5.constants.PathConstant.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +24,8 @@ import static com.projectmd5.constants.PathConstant.CATEGORIES;
 public class ClientController {
    private final ICategoryService categoryService;
    private final IProductService productService;
+
+   // Danh sách danh mục được bán
    @GetMapping(CATEGORIES)
    public ResponseEntity<?> getCategories(){
       List<Category> categories = categoryService.findAllPublish();
@@ -35,24 +36,25 @@ public class ClientController {
       return ResponseEntity.ok().body(response);
    }
 
-   // Danh sách sản phẩm được bán, tim kiếm theo tên sản phẩm hoặc tên mô tả
-   @GetMapping("/products")
+   // List sản phẩm được bán hoặc list tim kiếm theo tên / mô tả hoặc list sản phẩm mới nhất
+   @GetMapping(PRODUCTS)
    public ResponseEntity<?> getPublishProduct(
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
-         @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+         @RequestParam(name = "sortBy", defaultValue = "createdAt", required = false) String sortBy,
          @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String query
    ){
+      ProPageResponse response = null;
       if (query.isEmpty()){
-         ProPageResponse response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
+         response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok().body(response);
       }
-      ProPageResponse response = productService.searchByNameOrDescription(query ,pageNo, pageSize, sortBy, sortDir);
+      response = productService.searchByNameOrDescription(query ,pageNo, pageSize, sortBy, sortDir);
       return ResponseEntity.ok().body(response);
    }
 
-   @GetMapping("/products/{productId}")
+   @GetMapping(PRODUCT_ID)
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
       Product product = productService.findById(productId);
       if (!product.getCategory().isStatus()){
@@ -64,20 +66,8 @@ public class ClientController {
       return ResponseEntity.ok().body(response);
    }
 
-   // Danh sách sản phẩm mới nhất
-   @GetMapping("/products/new-products")
-   public ResponseEntity<?> getNewProducts(
-         @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize,
-         @RequestParam(name = "sortBy", defaultValue = "createdAt", required = false) String sortBy,
-         @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir
-   ){
-      ProPageResponse response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
-      return ResponseEntity.ok().body(response);
-   }
-
    // Tìm các sản phẩm theo category
-   @GetMapping("/products/categories/{categoryId}")
+   @GetMapping(PRODUCT_CATEGORY_ID)
    public ResponseEntity<?> getProductByCategory(
          @PathVariable Long categoryId,
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
