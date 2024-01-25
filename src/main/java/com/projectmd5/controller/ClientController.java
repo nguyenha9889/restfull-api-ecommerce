@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
+import static com.projectmd5.constants.PathConstant.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api.myservice.com/v1")
+@RequestMapping(API_V1)
 public class ClientController {
    private final ICategoryService categoryService;
    private final IProductService productService;
-   @GetMapping("/categories")
+   @GetMapping(CATEGORIES)
    public ResponseEntity<?> getCategories(){
       List<Category> categories = categoryService.findAllActive();
       ListCateResponse response = ListCateResponse.builder()
@@ -33,7 +34,7 @@ public class ClientController {
    }
 
    // Danh sách sản phẩm được bán, tim kiếm theo tên sản phẩm hoặc tên mô tả
-   @GetMapping("/products")
+   @GetMapping(PRODUCTS)
    public ResponseEntity<?> getPublishProduct(
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
@@ -49,7 +50,7 @@ public class ClientController {
       return ResponseEntity.ok().body(response);
    }
 
-   @GetMapping("/products/{productId}")
+   @GetMapping(PRODUCT_ID)
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
       Product product = productService.findById(productId);
       if (!product.getCategory().isStatus()){

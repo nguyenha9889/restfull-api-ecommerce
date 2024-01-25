@@ -23,6 +23,7 @@ public class PathConstant {
    public static final String CATEGORY_ID = "/categories/{categoryId}";
 
    public static final String USER = "/user";
+   public static final String API_V1_USER = "/api.myservice.com/v1/user";
    public static final String USER_ID = "/user/{userId}";
    public static final String ROLES = "/roles";
    public static final String ROLES_TO_USER = "/roles/{userId}";

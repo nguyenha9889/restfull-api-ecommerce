@@ -32,5 +32,5 @@ public class OrderDetail {
    @Column(precision=10, scale=2)
    private BigDecimal unitPrice;
 
-   private int orderQuantity;
+   private int quantity;
 }

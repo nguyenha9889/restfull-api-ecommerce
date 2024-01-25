@@ -3,6 +3,7 @@ package com.projectmd5.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Cart {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +27,8 @@ public class Cart {
    @JoinColumn(name = "productId")
    private Product product;
 
-   private int orderQuantity;
+   @OneToMany(mappedBy = "cart")
+   private List<CartItem> cartItems;
+
+   private int quantity;
 }
