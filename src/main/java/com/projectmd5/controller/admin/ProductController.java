@@ -1,6 +1,5 @@
 package com.projectmd5.controller.admin;
 
-import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.dto.product.ProductDetailResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
@@ -23,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
-import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
 import static com.projectmd5.constants.PathConstant.*;
 
 
@@ -57,13 +55,8 @@ public class ProductController {
    @GetMapping(PRODUCT_ID)
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
       Product product = productService.findById(productId);
-      if (product == null){
-         return new ResponseEntity<>(
-               new MessageResponse(PRODUCT_NOT_FOUND),
-               HttpStatus.NOT_FOUND);
-      }
       List<ProductDetail> proDetails = product.getProductDetails();
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetails);
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetails);
       ProductResponse response = mapper.map(product, ProductResponse.class);
       response.setProductDetails(detailResponses);
       return ResponseEntity.ok(response);
@@ -88,7 +81,7 @@ public class ProductController {
       productService.save(product);
 
       ProductResponse response = mapper.map(product, ProductResponse.class);
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetails);
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetails);
       response.setProductDetails(detailResponses);
       return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
@@ -107,18 +100,13 @@ public class ProductController {
       }
 
       Product product = productService.findById(productId);
-      if (product == null){
-         return new ResponseEntity<>(
-               new MessageResponse(PRODUCT_NOT_FOUND),
-               HttpStatus.NOT_FOUND);
-      }
       Product productUpdate = productService.update(product,proRequest);
       List<ProductDetail> proDetail = productDetailService.update(productUpdate, proRequest);
       product.setProductDetails(proDetail);
       productService.save(product);
 
       ProductResponse response = mapper.map(product, ProductResponse.class);
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetail);
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetail);
       response.setProductDetails(detailResponses);
       return ResponseEntity.ok(response);
    }
@@ -126,17 +114,12 @@ public class ProductController {
    @DeleteMapping(PRODUCT_ID)
    public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
       Product product = productService.findById(productId);
-      if (product == null){
-         return new ResponseEntity<>(
-               new MessageResponse(PRODUCT_NOT_FOUND),
-               HttpStatus.NOT_FOUND);
-      }
 
       List<ProductDetail> proDetail = productDetailService.deleteProductDetailsByProductId(productId);
       product.setProductDetails(proDetail);
 
       ProductResponse response = mapper.map(product, ProductResponse.class);
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsResponse(proDetail);
+      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetail);
       response.setProductDetails(detailResponses);
 
       productService.delete(product);

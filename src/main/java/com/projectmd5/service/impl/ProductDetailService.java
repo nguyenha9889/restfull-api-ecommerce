@@ -57,22 +57,27 @@ public class ProductDetailService implements IProductDetailService {
    }
 
    @Override
-   public List<ProductDetailResponse> mapperToDetailsResponse(List<ProductDetail> productDetails) {
+   public List<ProductDetailResponse> mapperToDetailsListResponse(List<ProductDetail> productDetails) {
       List<ProductDetailResponse> responses = new ArrayList<>();
       for (ProductDetail productDetail : productDetails) {
-         ProductDetailResponse detailResponse = new ProductDetailResponse();
-         detailResponse.setSku(productDetail.getSku());
-         if (productDetail.getSize() != null){
-            detailResponse.setSize(productDetail.getSize().name());
-         }
-         if (productDetail.getDough() != null){
-            detailResponse.setDough(productDetail.getDough());
-         }
-         detailResponse.setUnitPrice(productDetail.getUnitPrice().longValue());
-
+         ProductDetailResponse detailResponse = mapperToDetailResponse(productDetail);
          responses.add(detailResponse);
       }
       return responses;
+   }
+
+   @Override
+   public ProductDetailResponse mapperToDetailResponse(ProductDetail productDetail) {
+      ProductDetailResponse detailResponse = new ProductDetailResponse();
+      detailResponse.setSku(productDetail.getSku());
+      if (productDetail.getSize() != null){
+         detailResponse.setSize(productDetail.getSize().name());
+      }
+      if (productDetail.getDough() != null){
+         detailResponse.setDough(productDetail.getDough());
+      }
+      detailResponse.setUnitPrice(productDetail.getUnitPrice().longValue());
+      return detailResponse;
    }
 
    @Override

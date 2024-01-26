@@ -42,10 +42,7 @@ public class Product {
    @JsonIgnore
    @OneToMany(mappedBy = "product")
    private List<WishList> wishLists;
-   @JsonIgnore
-   @ToString.Exclude
-   @OneToMany(mappedBy = "product")
-   private List<Cart> carts;
+
    @JsonIgnore
    @OneToMany(mappedBy = "product")
    private List<OrderDetail> orderDetails;

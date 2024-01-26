@@ -21,6 +21,12 @@ public class CartItem {
    @JsonIgnore
    private Cart cart;
 
+   @ManyToOne
+   @JoinColumn(name = "productId")
+   @ToString.Exclude
+   @JsonIgnore
+   private Product product;
+
    @OneToOne
    @JoinColumn(name = "sku")
    private ProductDetail productDetail;

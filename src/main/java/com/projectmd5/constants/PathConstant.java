@@ -17,7 +17,6 @@ public class PathConstant {
 
    public static final String PRODUCTS = "/products";
    public static final String PRODUCT_CATEGORY_ID = "/products/categories/{categoryId}";
-   public static final String DELETE_BY_PRODUCT_ID = "/delete/{productId}";
    public static final String PRODUCT_ID = "/products/{productId}";
    public static final String CATEGORIES = "/categories";
    public static final String CATEGORY_ID = "/categories/{categoryId}";
@@ -34,9 +33,10 @@ public class PathConstant {
    public static final String API_V1_ORDER = API_V1 + ORDER;
 
 
-   public static final String ADD = "/create";
+   public static final String ADD = "/add";
    public static final String EDIT = "/edit";
    public static final String CART = "/cart";
+   public static final String CART_ITEM_ID = "/cart/{cartItemId}";
 
    public static final String DELETE_BY_ORDER_ID = ORDER + "/delete/{orderId}";
    public static final String USER_BY_ID = USER + "/{userId}";

@@ -6,6 +6,7 @@ public class MessageConstant {
    public static final String PRODUCT_DETAIL_NOT_FOUND = "Product detail not found";
    public static final String CATEGORY_NOT_FOUND = "Category not found";
    public static final String ORDER_NOT_FOUND = "Order not found";
+   public static final String CART_ITEM_NOT_FOUND = "Cart item not found";
    public static final String ROLE_NOT_FOUND = "Role not found";
    public static final String ROLE_EXISTED = "Role is existed";
    public static final String USER_BLOCK = "This user is blocked";

@@ -10,6 +10,7 @@ import java.util.List;
 public interface IProductDetailService extends IGenericService<ProductDetail, String>{
    List<ProductDetail> create(Product product, ProductRequest proRequest);
    List<ProductDetail> update(Product product, ProductRequest proRequest);
-   List<ProductDetailResponse> mapperToDetailsResponse(List<ProductDetail> productDetails);
+   List<ProductDetailResponse> mapperToDetailsListResponse(List<ProductDetail> productDetails);
+   ProductDetailResponse mapperToDetailResponse(ProductDetail productDetail);
    List<ProductDetail> deleteProductDetailsByProductId(Long productId);
 }

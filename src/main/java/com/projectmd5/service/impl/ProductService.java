@@ -1,5 +1,6 @@
 package com.projectmd5.service.impl;
 
+import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.product.ProPageResponse;
 import com.projectmd5.model.dto.product.ProductDetailResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
@@ -21,7 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+
+import static com.projectmd5.constants.MessageConstant.PRODUCT_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
@@ -38,8 +40,7 @@ public class ProductService implements IProductService {
 
    @Override
    public Product findById(Long id) {
-      Optional<Product> optional = productRepository.findById(id);
-      return optional.orElse(null);
+      return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND));
    }
 
    @Override
@@ -114,7 +115,7 @@ public class ProductService implements IProductService {
    public ProductResponse mapperToProductResponse(Product product){
       ProductResponse productResponse = mapper.map(product, ProductResponse.class);
       productResponse.setCategory(product.getCategory());
-      List<ProductDetailResponse>  detailsResponse = productDetailService.mapperToDetailsResponse(product.getProductDetails());
+      List<ProductDetailResponse>  detailsResponse = productDetailService.mapperToDetailsListResponse(product.getProductDetails());
       productResponse.setProductDetails(detailsResponse);
       return productResponse;
    }
@@ -193,9 +194,6 @@ public class ProductService implements IProductService {
    public ProPageResponse searchAllByCategory(Long categoryId, int pageNo, int pageSize, String sortBy, String sortDir) {
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
       Category category = categoryService.findById(categoryId);
-      if (category == null){
-         return null;
-      }
       Page<Product> pages = productRepository.findAllByCategoryAndCategoryIsTrue(category, pageable);
       List<Product> productList = pages.getContent();
 

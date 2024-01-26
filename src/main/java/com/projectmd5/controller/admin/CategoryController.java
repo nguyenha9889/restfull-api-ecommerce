@@ -1,6 +1,5 @@
 package com.projectmd5.controller.admin;
 
-import com.projectmd5.model.dto.MessageResponse;
 import com.projectmd5.model.dto.category.CatPageResponse;
 import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.entity.Category;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.projectmd5.constants.MessageConstant.CATEGORY_NOT_FOUND;
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 import static com.projectmd5.constants.PathConstant.*;
 
@@ -53,11 +51,6 @@ public class CategoryController {
    @GetMapping(CATEGORY_ID)
    public ResponseEntity<?> getCategory(@PathVariable Long categoryId){
       Category cate = categoryService.findById(categoryId);
-      if (cate == null){
-         return new ResponseEntity<>(
-               new MessageResponse(CATEGORY_NOT_FOUND),
-               HttpStatus.NOT_FOUND);
-      }
       return ResponseEntity.ok(cate);
    }
    @PostMapping(CATEGORIES)
@@ -89,12 +82,6 @@ public class CategoryController {
       }
 
       Category cate = categoryService.findById(categoryId);
-      if (cate == null){
-         return new ResponseEntity<>(
-               new MessageResponse(CATEGORY_NOT_FOUND),
-               HttpStatus.NOT_FOUND);
-      }
-
       Category cateUpdate = categoryService.update(cate, cateRequest);
       return ResponseEntity.ok(cateUpdate);
    }
@@ -102,11 +89,6 @@ public class CategoryController {
    @DeleteMapping(CATEGORY_ID)
    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId){
       Category cate = categoryService.findById(categoryId);
-      if (cate == null){
-         return new ResponseEntity<>(
-               new MessageResponse(CATEGORY_NOT_FOUND),
-               HttpStatus.NOT_FOUND);
-      }
       categoryService.delete(cate);
       return ResponseEntity.ok(DELETE_SUCCESS);
    }
