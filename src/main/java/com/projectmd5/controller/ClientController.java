@@ -46,7 +46,7 @@ public class ClientController {
          @RequestParam(name = "search", defaultValue = "", required = false) String query
    ){
       ProPageResponse response = null;
-      if (query.isEmpty()){
+      if (query.isBlank()){
          response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok().body(response);
       }

@@ -44,7 +44,7 @@ public class ProductController {
          @RequestParam(name = "search", defaultValue = "", required = false) String query
    ){
       ProPageResponse proPageResponse = null;
-      if (Objects.equals(query, "") || query.isBlank()){
+      if (query.isBlank()){
          proPageResponse = productService.getAllWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok(proPageResponse);
       }

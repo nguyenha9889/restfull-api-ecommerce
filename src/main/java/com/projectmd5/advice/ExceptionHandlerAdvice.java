@@ -1,5 +1,6 @@
 package com.projectmd5.advice;
 
+import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.exception.JWTException;
 import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.MessageResponse;
@@ -22,7 +23,6 @@ public class ExceptionHandlerAdvice {
    @ExceptionHandler(Exception.class)
    public ResponseEntity<MessageResponse> globalExceptionHandler(Exception ex) {
       MessageResponse message = new MessageResponse(ex.getMessage());
-
       return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
    }
 
@@ -46,10 +46,15 @@ public class ExceptionHandlerAdvice {
       return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
    }
 
-   @ExceptionHandler(JWTException.class)
-   public ResponseEntity<MessageResponse> handleBadRequestException(JWTException ex) {
+   @ExceptionHandler(BadRequestException.class)
+   public ResponseEntity<MessageResponse> handleBadRequestException(BadRequestException ex) {
       MessageResponse message = new MessageResponse(ex.getMessage());
+      return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+   }
 
+   @ExceptionHandler(JWTException.class)
+   public ResponseEntity<MessageResponse> handleJwtTokenException(JWTException ex) {
+      MessageResponse message = new MessageResponse(ex.getMessage());
       return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
    }
 

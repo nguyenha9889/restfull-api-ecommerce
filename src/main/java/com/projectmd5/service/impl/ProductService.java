@@ -131,7 +131,7 @@ public class ProductService implements IProductService {
    public ProPageResponse searchWithPaging(String name, int pageNo, int pageSize, String sortBy, String sortDir){
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
 
-      Page<Product> pages = productRepository.findByProductNameEqualsIgnoreCase(name, pageable);
+      Page<Product> pages = productRepository.findAllByProductNameContainingIgnoreCase(name, pageable);
       List<Product> productList = pages.getContent();
       List<ProductResponse> data = productList.stream()
          .map(this::mapperToProductResponse)
@@ -173,7 +173,7 @@ public class ProductService implements IProductService {
    @Override
    public ProPageResponse searchByNameOrDescription(String name, int pageNo, int pageSize, String sortBy, String sortDir) {
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
-      Page<Product> pages = productRepository.findAllByProductNameOrDescriptionAndCategoryIsTrue(name, name, pageable);
+      Page<Product> pages = productRepository.findProductPublishByNameOrDescription(name, name, pageable);
       List<Product> productList = pages.getContent();
 
       List<ProductResponse> data = productList.stream()

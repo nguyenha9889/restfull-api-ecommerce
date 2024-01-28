@@ -1,9 +1,11 @@
 package com.projectmd5.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @AllArgsConstructor
@@ -14,6 +16,8 @@ public class Address {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long addressId;
 
+   @JsonIgnore
+   @ToString.Exclude
    @ManyToOne
    @JoinColumn(name = "userId")
    private User user;
@@ -26,4 +30,5 @@ public class Address {
    @Column(length = 50)
    private String receiveName;
 
+   private boolean defaultAddress = false;
 }

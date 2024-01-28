@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Data
@@ -24,9 +23,13 @@ public class Cart {
    @JoinColumn(name = "userId")
    private User user;
 
-   @OneToMany(mappedBy = "cart")
-   private List<CartItem> cartItems;
+   @ManyToOne
+   @JoinColumn(name = "productId")
+   private Product product;
 
-   @Column(precision=10, scale=2)
-   private BigDecimal totalPrice;
+   @OneToOne
+   @JoinColumn(name = "sku")
+   private ProductDetail productDetail;
+
+   private int quantity;
 }

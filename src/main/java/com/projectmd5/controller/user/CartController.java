@@ -1,21 +1,25 @@
 package com.projectmd5.controller.user;
 
 
-import com.projectmd5.model.dto.cart.CartItemRequest;
+import com.projectmd5.model.dto.cart.CartRequest;
 import com.projectmd5.model.dto.cart.CartResponse;
+import com.projectmd5.model.dto.cart.CartUpdateRequest;
 import com.projectmd5.model.entity.Cart;
 import com.projectmd5.model.entity.User;
 import com.projectmd5.security.principal.UserDetailCustom;
 import com.projectmd5.service.ICartService;
 import com.projectmd5.service.IUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 import static com.projectmd5.constants.PathConstant.*;
 
 @RestController
@@ -24,18 +28,64 @@ import static com.projectmd5.constants.PathConstant.*;
 public class CartController {
    private final ICartService cartService;
    private final IUserService userService;
+   @GetMapping(CART)
+   public ResponseEntity<?> getCarts(){
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      List<Cart> carts = cartService.findAllByUser(user);
+      if (carts.isEmpty()){
+         return ResponseEntity.ok("Giỏ hàng trống");
+      }
+      List<CartResponse> responses = new ArrayList<>();
+      carts.forEach(cart -> {
+         CartResponse cartResponse = cartService.mapToCartResponse(cart);
+         responses.add(cartResponse);
+      });
+      return ResponseEntity.ok(responses);
+   }
+
+   @GetMapping(CART_ID)
+   public ResponseEntity<?> getCartById(@PathVariable Long cartId){
+      Cart cart = cartService.findById(cartId);
+      CartResponse response = cartService.mapToCartResponse(cart);
+     return ResponseEntity.ok(response);
+   }
+
    @PostMapping(CART)
-   public ResponseEntity<?> addCart(@RequestBody List<CartItemRequest> cartItemRequests){
-      UserDetailCustom userDetails = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-      User user = userService.findById(userDetails.getId());
-      Cart cart = cartService.add(user, cartItemRequests);
+   public ResponseEntity<?> addCart(@Valid @RequestBody CartRequest cartRequest){
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      Cart cart = cartService.add(user, cartRequest);
       CartResponse response = cartService.mapToCartResponse(cart);
       return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
 
-   @PutMapping(CART_ITEM_ID)
-   public ResponseEntity<?> updateCart(@PathVariable Long cartItemId ,@RequestBody int quantity){
+   @PutMapping(CART_ID)
+   public ResponseEntity<?> updateCart(@PathVariable Long cartId , @Valid @RequestBody CartUpdateRequest request){
+      Cart cart = cartService.update(cartId, request.getQuantity());
+      if (cart == null){
+         return ResponseEntity.ok( "CartId " + cartId +" không còn trong giỏ hàng");
+      }
+      CartResponse response = cartService.mapToCartResponse(cart);
+      return ResponseEntity.ok(response);
+   }
 
-      return null;
+   @DeleteMapping(CART_ID)
+   public ResponseEntity<?> deleteCartById(@PathVariable Long cartId){
+      Cart cart = cartService.findById(cartId);
+      cartService.delete(cart);
+      return ResponseEntity.ok(DELETE_SUCCESS);
+   }
+
+   @DeleteMapping(CART)
+   public ResponseEntity<?> deleteAllCarts(){
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      List<Cart> carts = cartService.findAllByUser(user);
+      if (carts.isEmpty()){
+         return ResponseEntity.ok("Giỏ hàng trống");
+      }
+      cartService.deleteAll(carts);
+      return ResponseEntity.ok(DELETE_SUCCESS);
    }
 }

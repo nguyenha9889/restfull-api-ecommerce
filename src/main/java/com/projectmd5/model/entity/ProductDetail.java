@@ -2,7 +2,9 @@ package com.projectmd5.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -15,9 +17,9 @@ public class ProductDetail {
    @Column(length = 100)
    private String sku;
 
-   @ManyToOne
-   @JsonIgnore
    @ToString.Exclude
+   @JsonIgnore
+   @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "productId")
    private Product product;
 

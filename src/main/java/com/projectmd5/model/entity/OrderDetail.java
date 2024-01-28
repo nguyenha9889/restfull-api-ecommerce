@@ -1,9 +1,8 @@
 package com.projectmd5.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -11,11 +10,14 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "order_detail")
 public class OrderDetail {
    @EmbeddedId
    private OrderDetailId orderDetailId;
 
+   @JsonIgnore
+   @ToString.Exclude
    @ManyToOne
    @MapsId("orderId")
    @JoinColumn(name = "orderId")
@@ -27,10 +29,11 @@ public class OrderDetail {
    private Product product;
 
    @Column(length = 100)
-   private String name;
+   private String productName;
 
-   @Column(precision=10, scale=2)
-   private BigDecimal unitPrice;
+   @OneToOne
+   @JoinColumn(name = "sku")
+   private ProductDetail productDetail;
 
    private int quantity;
 }

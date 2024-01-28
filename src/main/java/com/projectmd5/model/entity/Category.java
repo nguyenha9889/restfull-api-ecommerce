@@ -9,7 +9,6 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Data
 @Table(name = "category", uniqueConstraints = {
       @UniqueConstraint(columnNames = "categoryName"),

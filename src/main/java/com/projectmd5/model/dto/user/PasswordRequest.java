@@ -14,13 +14,9 @@ import lombok.NoArgsConstructor;
       confirmPassword = "confirmPassword"
 )
 public class PasswordRequest {
-   private Long userId;
-   private String username;
-
    @NotBlank(message = "Yêu cầu nhập mật khẩu cũ")
    private String oldPassword;
    @NotBlank(message = "Yêu cầu nhập mật khẩu mới")
    private String password;
    private String confirmPassword;
-
 }

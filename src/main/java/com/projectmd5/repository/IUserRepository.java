@@ -17,6 +17,6 @@ public interface IUserRepository extends JpaRepository<User, Long> {
    Boolean existsByUsernameEqualsIgnoreCase(String username);
    Boolean existsByEmailEqualsIgnoreCase(String email);
    Boolean existsByPhone(String phone);
-   @Query("select u from User u where lower(u.fullName) like lower(concat('%',?1,'%'))")
-   Page<User> findByNameWithPagination(String name, Pageable pageable);
+   Page<User> findAllByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(String username, String email, Pageable pageable);
+   Page<User> findAllByPhoneContaining(String phone, Pageable pageable);
 }

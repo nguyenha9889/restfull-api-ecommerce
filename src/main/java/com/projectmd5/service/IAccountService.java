@@ -9,10 +9,13 @@ import java.util.List;
 public interface IAccountService extends IGenericService<User, Long>{
    boolean existsByEmail(Long userId, String email);
    boolean existsByPhone(Long userId, String phone);
-   BaseUserResponse update(Long userId, AccountRequest accountRequest);
-   String changePassword(PasswordRequest request);
-   Address addNewAddress(AddressRequest request);
-   Address findAddressById(Long addressId);
-   Address update(Long addressId, AddressRequest request);
-   List<Address> getAddresses(Long userId);
+   AccountResponse getAccount(User user);
+   AccountResponse updateAccount(User user, AccountRequest accountRequest);
+   AccountResponse mapUserToAccountResponse(User user);
+   String changePassword(User user, PasswordRequest request);
+   AddressResponse addNewAddress(User user, AddressRequest request);
+   AddressResponse findAddressById(Long addressId);
+   Address findDefaultAddress(User user);
+   AddressResponse updateAddress(Long addressId, AddressRequest request);
+   List<AddressResponse> getAllAddressResponse(User user);
 }

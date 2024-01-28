@@ -3,6 +3,7 @@ package com.projectmd5.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,13 +15,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Orders {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long orderId;
-   @GeneratedValue(strategy = GenerationType.UUID)
-   @Size(max = 100)
-   private String serialNumber;
 
    @ManyToOne
    @JoinColumn(name = "userId")
@@ -47,7 +46,10 @@ public class Orders {
    private String receivePhone;
 
    @Temporal(TemporalType.DATE)
-   private Date createdAt = new Date();
+   private Date createdAt;
+
+   @Temporal(TemporalType.DATE)
+   private Date updatedAt;
 
    @Temporal(TemporalType.DATE)
    private Date receivedAt;

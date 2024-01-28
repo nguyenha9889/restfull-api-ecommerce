@@ -2,7 +2,10 @@ package com.projectmd5.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString(exclude = {"category", "carts", "wishLists", "orderDetails"})
 @Table(name = "product", uniqueConstraints = {
       @UniqueConstraint(columnNames = "productName"),
 })
@@ -40,10 +44,14 @@ public class Product {
    private Date updatedAt;
 
    @JsonIgnore
-   @OneToMany(mappedBy = "product")
+   @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+   private List<Cart> carts;
+
+   @JsonIgnore
+   @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
    private List<WishList> wishLists;
 
    @JsonIgnore
-   @OneToMany(mappedBy = "product")
+   @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
    private List<OrderDetail> orderDetails;
 }

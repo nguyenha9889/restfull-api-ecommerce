@@ -1,4 +1,4 @@
-package com.projectmd5.model.dto.user;
+package com.projectmd5.model.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserPageResponse {
-   private List<AccountResponse> data;
+public class OrderPageResponse {
+   private List<OrderResponse> data;
    private int pageNo;
    private int pageSize;
    private long totalElements;

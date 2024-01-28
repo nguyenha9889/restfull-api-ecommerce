@@ -70,7 +70,7 @@ public class AuthService implements IAuthService {
 
       // check account locked or enable
       if (!userDetail.isAccountNonLocked()){
-         throw new JWTException(USER_BLOCK);
+         throw new JWTException(USER_IS_BLOCKED);
       }
       List<String> roles = userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
@@ -97,7 +97,7 @@ public class AuthService implements IAuthService {
       roles.add(userRole);
       user.setRoles(roles);
       user.setCreatedAt(new Date());
-
+      user.setUpdatedAt(new Date());
       userRepository.save(user);
       return REGISTER_SUCCESS;
    }

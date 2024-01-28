@@ -1,11 +1,10 @@
 package com.projectmd5.model.dto.cart;
 
+import com.projectmd5.model.dto.product.ProductDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +12,9 @@ import java.util.List;
 @Builder
 public class CartResponse {
    private Long cartId;
-   private Long userId;
-   private List<CartItemResponse> cartItems;
-   private Long totalPrice;
+   private Long productId;
+   private String productName;
+   private String imagePath;
+   private ProductDetailResponse productDetail;
+   private int quantity;
 }

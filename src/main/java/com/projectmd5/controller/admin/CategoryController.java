@@ -36,7 +36,7 @@ public class CategoryController {
          @RequestParam(name = "search", defaultValue = "", required = false) String name
    ){
       CatPageResponse catPageResponse = null;
-      if (Objects.equals(name, "") || name.isBlank()){
+      if (name.isBlank()){
          if (pageSize == 1) {
             catPageResponse = categoryService.getAllWithPaging(pageNo, categoryService.findAll().size(), sortBy, sortDir);
          } else {
@@ -54,7 +54,7 @@ public class CategoryController {
       return ResponseEntity.ok(cate);
    }
    @PostMapping(CATEGORIES)
-   public ResponseEntity<?> addCategory(@RequestBody CategoryRequest cateRequest,
+   public ResponseEntity<?> addCategory(@ModelAttribute CategoryRequest cateRequest,
                                         BindingResult bindingResult) {
       validator.validate(cateRequest, bindingResult);
 
@@ -71,7 +71,7 @@ public class CategoryController {
 
    @PutMapping(CATEGORY_ID)
    public ResponseEntity<?> updateCategory(@PathVariable Long categoryId,
-                                           @Valid @RequestBody CategoryRequest cateRequest,
+                                           @ModelAttribute CategoryRequest cateRequest,
                                            BindingResult bindingResult){
       validator.validate(cateRequest, bindingResult);
       if (bindingResult.hasErrors()){

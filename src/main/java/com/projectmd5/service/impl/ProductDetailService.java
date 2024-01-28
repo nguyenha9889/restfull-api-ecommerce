@@ -97,6 +97,11 @@ public class ProductDetailService implements IProductDetailService {
 
       for (ProductDetailRequest request : detailsRequest) {
          ProductDetail productDetail = findById(request.getSku());
+
+         if (productDetail == null){
+            productDetail = new ProductDetail();
+            productDetail.setSku(UUID.randomUUID().toString());
+         }
          productDetail.setProduct(product);
          if (request.getSize() != null){
             productDetail.setSize(EProductSize.valueOf(request.getSize()));

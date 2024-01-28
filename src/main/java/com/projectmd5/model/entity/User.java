@@ -8,16 +8,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+@ToString(exclude = {"wishLists", "carts", "orders"})
 @Entity
 @Table(name = "user", uniqueConstraints = {
       @UniqueConstraint(columnNames = "username"),
       @UniqueConstraint(columnNames = "email"),
       @UniqueConstraint(columnNames = "phone")
 })
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@Builder
 public class User {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,14 +57,15 @@ public class User {
    @OneToMany(mappedBy = "user")
    private List<Address> addresses;
 
+   @JsonIgnore
    @OneToMany(mappedBy = "user")
    private List<WishList> wishLists;
 
    @JsonIgnore
-   @ToString.Exclude
    @OneToMany(mappedBy = "user")
    private List<Cart> carts;
 
+   @JsonIgnore
    @OneToMany(mappedBy = "user")
    private List<Orders> orders;
 }

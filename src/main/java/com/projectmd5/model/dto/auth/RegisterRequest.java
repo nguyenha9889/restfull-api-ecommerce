@@ -21,7 +21,7 @@ import static com.projectmd5.constants.MessageConstant.*;
 )
 @Builder
 public class RegisterRequest {
-   @Setter
+
    @NotBlank(message = FULLNAME_NOT_BLANK)
    private String fullName;
 
@@ -34,24 +34,13 @@ public class RegisterRequest {
    @EmailUnique
    private String email;
 
-   @Setter
    @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = PHONE_INVALID)
    @PhoneUnique
    private String phone;
 
-   @Setter
    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z]).{8,}$", message = PASSWORD_RULE)
    private String password;
 
-   @Setter
    private String confirmPassword;
-
-   public void setUsername(String username) {
-      this.username = username.toLowerCase().trim();
-   }
-
-   public void setEmail(String email) {
-      this.email = email.toLowerCase().trim();
-   }
 
 }

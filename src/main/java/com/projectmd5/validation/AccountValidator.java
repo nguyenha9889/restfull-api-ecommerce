@@ -1,14 +1,18 @@
 package com.projectmd5.validation;
 
 import com.projectmd5.model.dto.user.AccountRequest;
+import com.projectmd5.security.principal.UserDetailCustom;
 import com.projectmd5.service.IAccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.projectmd5.constants.MessageConstant.*;
 
 @Component
 @RequiredArgsConstructor
@@ -23,25 +27,24 @@ public class AccountValidator implements Validator {
    public void validate(Object target, Errors errors) {
       AccountRequest request = (AccountRequest) target;
 
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userId", "Họ tên không để trống");
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "Địa chỉ email không để trống");
-      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone", "Số điện thoại không để trống");
+      ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fullName", FULLNAME_NOT_BLANK);
 
       if (!errors.hasFieldErrors()){
          if (!request.getEmail().matches("^[a-zA-Z]+[a-zA-Z0-9]*@{1}[a-zA-Z]+mail.com$")){
-            errors.rejectValue("email", "Địa chỉ email không hợp lệ");
+            errors.rejectValue("email", EMAIL_INVALID);
          }
 
          if (!request.getPhone().matches("^(84|0[3|5|7|8|9])+([0-9]{8})$")){
-            errors.rejectValue("phone", "Số điện thoại không hợp lệ");
+            errors.rejectValue("phone", PHONE_INVALID);
          }
 
-         if (accountService.existsByEmail(request.getUserId(), request.getEmail())) {
-            errors.rejectValue("email", "Địa chỉ email đã được đăng ký");
+         UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+         if (accountService.existsByEmail(userDetail.getId(), request.getEmail())) {
+            errors.rejectValue("email", EMAIL_EXISTED);
          }
 
-         if (accountService.existsByPhone(request.getUserId(), request.getEmail())) {
-            errors.rejectValue("phone", "Số điện thoại đã được đăng ký");
+         if (accountService.existsByPhone(userDetail.getId(), request.getEmail())) {
+            errors.rejectValue("phone", PHONE_EXISTED);
          }
       }
 
