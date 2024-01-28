@@ -3,7 +3,6 @@ package com.projectmd5.validation;
 import com.projectmd5.model.dto.user.AccountRequest;
 import com.projectmd5.security.principal.UserDetailCustom;
 import com.projectmd5.service.IAccountService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
