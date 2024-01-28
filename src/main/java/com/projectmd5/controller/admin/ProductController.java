@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 import static com.projectmd5.constants.PathConstant.*;
@@ -43,7 +42,7 @@ public class ProductController {
          @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String query
    ){
-      ProPageResponse proPageResponse = null;
+      ProPageResponse proPageResponse;
       if (query.isBlank()){
          proPageResponse = productService.getAllWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok(proPageResponse);

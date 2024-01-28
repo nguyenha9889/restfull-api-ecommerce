@@ -9,8 +9,6 @@ public class PathConstant {
    public static final String LOGIN = "/sign-in";
    public static final String LOGOUT = "/sign-out";
    public static final String REFRESH_TOKEN = "/refresh-token";
-   public static final String FORGOT_EMAIL = "/forgot/{email}";
-   public static final String RESET = "/reset";
    public static final String CHANGE_PASSWORD = "/user/change-password";
    public static final String USER_ADDRESS_ID = "/user/address/{addressId}";
    public static final String USER_ADDRESS = "/user/address";

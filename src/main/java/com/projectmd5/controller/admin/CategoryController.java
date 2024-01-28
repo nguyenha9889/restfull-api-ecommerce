@@ -5,7 +5,6 @@ import com.projectmd5.model.dto.category.CategoryRequest;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.service.ICategoryService;
 import com.projectmd5.validation.CategoryValidator;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 import static com.projectmd5.constants.PathConstant.*;
@@ -35,7 +33,7 @@ public class CategoryController {
          @RequestParam(name = "sortDir", defaultValue = "desc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String name
    ){
-      CatPageResponse catPageResponse = null;
+      CatPageResponse catPageResponse;
       if (name.isBlank()){
          if (pageSize == 1) {
             catPageResponse = categoryService.getAllWithPaging(pageNo, categoryService.findAll().size(), sortBy, sortDir);

@@ -3,7 +3,6 @@ package com.projectmd5.repository;
 import com.projectmd5.model.entity.EOrderStatus;
 import com.projectmd5.model.entity.Orders;
 import com.projectmd5.model.entity.User;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

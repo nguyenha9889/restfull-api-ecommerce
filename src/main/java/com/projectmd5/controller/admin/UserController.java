@@ -25,7 +25,7 @@ public class UserController {
          @RequestParam(name = "sortDir", defaultValue = "desc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String query){
 
-      UserPageResponse response = null;
+      UserPageResponse response;
       if (query.isBlank()){
          response = userService.getPageUser(pageNo, pageSize, sortBy, sortDir);
       } else {

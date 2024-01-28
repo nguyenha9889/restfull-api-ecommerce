@@ -53,7 +53,7 @@ public class AuthService implements IAuthService {
 
    @Override
    public AuthResponse login(LoginRequest login) {
-      Authentication auth = null;
+      Authentication auth;
       try {
          auth = authManager.authenticate(
                new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())

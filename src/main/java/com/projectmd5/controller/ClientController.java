@@ -45,7 +45,7 @@ public class ClientController {
          @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
          @RequestParam(name = "search", defaultValue = "", required = false) String query
    ){
-      ProPageResponse response = null;
+      ProPageResponse response;
       if (query.isBlank()){
          response = productService.getAllPublishWithPaging(pageNo, pageSize, sortBy, sortDir);
          return ResponseEntity.ok().body(response);

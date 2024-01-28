@@ -34,7 +34,7 @@ public class RegisterRequest {
    @EmailUnique
    private String email;
 
-   @Pattern(regexp = "^(84|0[3|5|7|8|9])+([0-9]{8})$", message = PHONE_INVALID)
+   @Pattern(regexp = "^(84|0[35789])+([0-9]{8})$", message = PHONE_INVALID)
    @PhoneUnique
    private String phone;
 

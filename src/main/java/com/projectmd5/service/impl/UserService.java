@@ -75,7 +75,7 @@ public class UserService implements IUserService {
    @Override
    public UserPageResponse searchWithPaging(String query, int pageNo, int pageSize, String sortBy, String sortDir){
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
-      Page<User> pages = null;
+      Page<User> pages;
       if (query.trim().matches("\\d+")){
          pages = userRepository.findAllByPhoneContaining(query, pageable);
       } else {
@@ -108,7 +108,7 @@ public class UserService implements IUserService {
       user.setUpdatedAt(new Date());
       User newUser = userRepository.save(user);
       return mapUserToUserResponse(newUser);
-   };
+   }
 
    @Override
    public UserResponse addRoleUser(Long userId, Long roleId){
@@ -124,7 +124,7 @@ public class UserService implements IUserService {
       user.setUpdatedAt(new Date());
       User newUser = userRepository.save(user);
       return mapUserToUserResponse(newUser);
-   };
+   }
 
    @Override
    public void deleteRoleUser(Long userId, Long roleId){
@@ -136,7 +136,7 @@ public class UserService implements IUserService {
       user.getRoles().remove(role);
       user.setUpdatedAt(new Date());
       userRepository.save(user);
-   };
+   }
 
    private UserResponse mapUserToUserResponse(User user){
       UserResponse response = modelMapper.map(user, UserResponse.class);

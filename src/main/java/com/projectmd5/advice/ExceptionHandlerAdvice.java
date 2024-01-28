@@ -59,13 +59,13 @@ public class ExceptionHandlerAdvice {
    }
 
    @ExceptionHandler(MaxUploadSizeExceededException.class)
-   public ResponseEntity<MessageResponse> handleMaxSizeException(MaxUploadSizeExceededException ex, WebRequest request) {
+   public ResponseEntity<MessageResponse> handleMaxSizeException() {
       MessageResponse message = new MessageResponse("Max file size less than 2MB");
       return new ResponseEntity<>(message, HttpStatus.EXPECTATION_FAILED);
    }
 
    @ExceptionHandler(MultipartException.class)
-   public ResponseEntity<MessageResponse> handleMultipartException(MultipartException ex, WebRequest request){
+   public ResponseEntity<MessageResponse> handleMultipartException(MultipartException ex){
       MessageResponse message = new MessageResponse(ex.getMessage());
 
       return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);

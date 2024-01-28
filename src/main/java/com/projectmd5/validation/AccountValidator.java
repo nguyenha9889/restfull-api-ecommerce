@@ -3,6 +3,7 @@ package com.projectmd5.validation;
 import com.projectmd5.model.dto.user.AccountRequest;
 import com.projectmd5.security.principal.UserDetailCustom;
 import com.projectmd5.service.IAccountService;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class AccountValidator implements Validator {
             errors.rejectValue("email", EMAIL_INVALID);
          }
 
-         if (!request.getPhone().matches("^(84|0[3|5|7|8|9])+([0-9]{8})$")){
+         if (!request.getPhone().matches("^(84|0[35789])+([0-9]{8})$")){
             errors.rejectValue("phone", PHONE_INVALID);
          }
 

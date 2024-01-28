@@ -1,13 +1,9 @@
 package com.projectmd5.model.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.projectmd5.model.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
