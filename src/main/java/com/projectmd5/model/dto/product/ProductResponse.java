@@ -2,11 +2,9 @@ package com.projectmd5.model.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.projectmd5.model.entity.Category;
-import com.projectmd5.model.entity.ProductDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 import java.util.Date;
 import java.util.List;
