@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.projectmd5.constants.MessageConstant.ADDRESS_NOT_FOUND;
+import static com.projectmd5.constants.MessageConstant.ADDRESS_DEFAULT_NOT_FOUND;
 import static com.projectmd5.constants.MessageConstant.ORDER_NOT_FOUND;
 
 @RequiredArgsConstructor
@@ -55,7 +55,7 @@ public class OrderService implements IOrderService {
    @Override
    public Orders createOrder(User user, OrderDetailRequest orderDetailRequest) {
       Address address = user.getAddresses().stream().filter(Address::isDefaultAddress).findFirst().orElseThrow(
-            () -> new ResourceNotFoundException(ADDRESS_NOT_FOUND)
+            () -> new ResourceNotFoundException(ADDRESS_DEFAULT_NOT_FOUND)
       );
       Orders orders = orderRepository.save(Orders.builder()
             .user(user)

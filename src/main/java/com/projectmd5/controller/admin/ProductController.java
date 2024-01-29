@@ -1,23 +1,18 @@
 package com.projectmd5.controller.admin;
 
 import com.projectmd5.model.dto.product.ProPageResponse;
-import com.projectmd5.model.dto.product.ProductDetailResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.dto.product.ProductResponse;
 import com.projectmd5.model.entity.Product;
-import com.projectmd5.model.entity.ProductDetail;
-import com.projectmd5.service.IProductDetailService;
 import com.projectmd5.service.IProductService;
 import com.projectmd5.validation.ProductValidator;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
@@ -30,9 +25,7 @@ import static com.projectmd5.constants.PathConstant.*;
 public class ProductController {
 
    private final IProductService productService;
-   private final IProductDetailService productDetailService;
    private final ProductValidator validator;
-   private final ModelMapper mapper;
 
    @GetMapping(PRODUCTS)
    public ResponseEntity<?> getList(
@@ -53,11 +46,7 @@ public class ProductController {
 
    @GetMapping(PRODUCT_ID)
    public ResponseEntity<?> getProduct(@PathVariable Long productId){
-      Product product = productService.findById(productId);
-      List<ProductDetail> proDetails = product.getProductDetails();
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetails);
-      ProductResponse response = mapper.map(product, ProductResponse.class);
-      response.setProductDetails(detailResponses);
+      ProductResponse response = productService.getProductById(productId);
       return ResponseEntity.ok(response);
    }
 
@@ -73,15 +62,7 @@ public class ProductController {
                errors.put(err.getField(), err.getCode()));
          return ResponseEntity.badRequest().body(errors);
       }
-
-      Product product = productService.create(proRequest);
-      List<ProductDetail> proDetails = productDetailService.create(product, proRequest);
-      product.setProductDetails(proDetails);
-      productService.save(product);
-
-      ProductResponse response = mapper.map(product, ProductResponse.class);
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetails);
-      response.setProductDetails(detailResponses);
+      ProductResponse response = productService.addNew(proRequest);
       return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
 
@@ -97,30 +78,13 @@ public class ProductController {
                errors.put(err.getField(), err.getCode()));
          return ResponseEntity.badRequest().body(errors);
       }
-
-      Product product = productService.findById(productId);
-      Product productUpdate = productService.update(product,proRequest);
-      List<ProductDetail> proDetail = productDetailService.update(productUpdate, proRequest);
-      product.setProductDetails(proDetail);
-      productService.save(product);
-
-      ProductResponse response = mapper.map(product, ProductResponse.class);
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetail);
-      response.setProductDetails(detailResponses);
+      ProductResponse response = productService.update(productId, proRequest);
       return ResponseEntity.ok(response);
    }
 
    @DeleteMapping(PRODUCT_ID)
    public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
       Product product = productService.findById(productId);
-
-      List<ProductDetail> proDetail = productDetailService.deleteProductDetailsByProductId(productId);
-      product.setProductDetails(proDetail);
-
-      ProductResponse response = mapper.map(product, ProductResponse.class);
-      List<ProductDetailResponse> detailResponses = productDetailService.mapperToDetailsListResponse(proDetail);
-      response.setProductDetails(detailResponses);
-
       productService.delete(product);
       return ResponseEntity.ok(DELETE_SUCCESS);
    }

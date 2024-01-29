@@ -9,8 +9,9 @@ import com.projectmd5.model.entity.Product;
 public interface IProductService extends IGenericService<com.projectmd5.model.entity.Product, Long>{
    ProPageResponse getAllWithPaging(int pageNo, int pageSize, String sortBy, String sortDir);
    ProPageResponse searchWithPaging(String name, int pageNo, int pageSize, String sortBy, String sortDir);
-   Product create(ProductRequest proRequest);
-   Product update(Product product, ProductRequest proRequest);
+   ProductResponse getProductById(Long productId);
+   ProductResponse addNew(ProductRequest proRequest);
+   ProductResponse update(Long productId, ProductRequest proRequest);
    boolean existProductName(Long id, String name);
    ProductResponse mapperToProductResponse(Product product);
 

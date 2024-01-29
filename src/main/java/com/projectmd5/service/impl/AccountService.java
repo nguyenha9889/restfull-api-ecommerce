@@ -99,17 +99,18 @@ public class AccountService implements IAccountService {
    @Override
    public AddressResponse addNewAddress(User user, AddressRequest request) {
       Address address = modelMapper.map(request, Address.class);
-      address.setUser(user);
       if (request.isDefaultAddress()){
-         address.setDefaultAddress(true);
-         Address defaultAddress = findDefaultAddress(user);
-         if (defaultAddress != null){
-            defaultAddress.setDefaultAddress(false);
-            addressRepository.save(defaultAddress);
+         List<Address> defaultAddress = findDefaultAddress(user);
+         if (!defaultAddress.isEmpty()){
+            defaultAddress.forEach(ad -> {
+               ad.setDefaultAddress(false);
+               addressRepository.save(ad);
+            });
          }
       }
-      addressRepository.save(address);
-      return modelMapper.map(address, AddressResponse.class);
+      address.setUser(user);
+      Address newAddress = addressRepository.save(address);
+      return modelMapper.map(newAddress, AddressResponse.class);
    }
 
    @Override
@@ -125,49 +126,41 @@ public class AccountService implements IAccountService {
       Address address = addressRepository.findById(addressId).orElseThrow(
             () -> new ResourceNotFoundException(ADDRESS_NOT_FOUND)
       );
-      Address updateAddress = modelMapper.map(address, Address.class);
-      updateAddress.setReceiveName(request.getReceiveName());
-      updateAddress.setPhone(request.getPhone());
-      updateAddress.setFullAddress(request.getFullAddress());
-
+      address.setReceiveName(request.getReceiveName());
+      address.setPhone(request.getPhone());
+      address.setFullAddress(request.getFullAddress());
       if (request.isDefaultAddress()){
-         updateAddress.setDefaultAddress(true);
-         User user = address.getUser();
-         Address defaultAddress = findDefaultAddress(user);
-         if (defaultAddress != null){
-            defaultAddress.setDefaultAddress(false);
-            addressRepository.save(defaultAddress);
+         List<Address> defaultAddress = findDefaultAddress(address.getUser());
+         if (!defaultAddress.isEmpty()){
+            defaultAddress.forEach(ad -> {
+               if (!Objects.equals(ad.getAddressId(), addressId)){
+                  ad.setDefaultAddress(false);
+                  addressRepository.save(ad);
+               }
+            });
          }
       }
-      addressRepository.save(updateAddress);
 
+      Address updateAddress = addressRepository.save(address);
       return modelMapper.map(updateAddress, AddressResponse.class);
    }
 
    @Override
    public List<AddressResponse> getAllAddressResponse(User user) {
-      List<Address> addresses = getAllAddresses(user);
+      List<Address> addresses = addressRepository.findAllByUser(user);
+      if (addresses.isEmpty()){
+         throw new ResourceNotFoundException(ADDRESSES_EMPTY);
+      }
       return addresses.stream()
             .map(address -> modelMapper.map(address, AddressResponse.class))
             .toList();
    }
 
-   private List<Address> getAllAddresses(User user){
-      List<Address> addresses = addressRepository.findAllByUser(user);
-      if (addresses.isEmpty()){
-         throw new ResourceNotFoundException(ADDRESSES_EMPTY);
-      }
-      return addresses;
-   }
-
    @Override
-   public Address findDefaultAddress(User user) {
-      List<Address> addresses = getAllAddresses(user);
-      for (Address address: addresses) {
-         if (address.isDefaultAddress()){
-            return address;
-         }
-      }
-      return null;
+   public List<Address> findDefaultAddress(User user) {
+      List<Address> addresses = addressRepository.findAllByUser(user);
+      return addresses.stream()
+            .filter(Address::isDefaultAddress)
+            .toList();
    }
 }

@@ -34,7 +34,7 @@ public class ProductDetailService implements IProductDetailService {
    }
 
    @Override
-   public List<ProductDetail> create(Product product, ProductRequest proRequest) {
+   public List<ProductDetail> add(Product product, ProductRequest proRequest) {
       List<ProductDetailRequest> detailsRequest = proRequest.getProductDetails();
       List<ProductDetail> productDetails = new ArrayList<>();
 
@@ -81,28 +81,18 @@ public class ProductDetailService implements IProductDetailService {
    }
 
    @Override
-   public List<ProductDetail> deleteProductDetailsByProductId(Long productId) {
-      List<ProductDetail> productDetails = productDetailRepo.findProductDetailsByProduct_ProductId(productId);
-      if (productDetails != null){
-         productDetailRepo.deleteAll(productDetails);
-         return productDetails;
-      }
-      return null;
-   }
-
-   @Override
-   public List<ProductDetail> update(Product product, ProductRequest proRequest) {
+   public List<ProductDetail> update(Product product, ProductRequest proRequest){
       List<ProductDetailRequest> detailsRequest = proRequest.getProductDetails();
       List<ProductDetail> productDetails = new ArrayList<>();
-
       for (ProductDetailRequest request : detailsRequest) {
-         ProductDetail productDetail = findById(request.getSku());
-
-         if (productDetail == null){
+         ProductDetail productDetail;
+         if (request.getSku() == null) {
             productDetail = new ProductDetail();
             productDetail.setSku(UUID.randomUUID().toString());
+            productDetail.setProduct(product);
+         } else {
+            productDetail = findById(request.getSku());
          }
-         productDetail.setProduct(product);
          if (request.getSize() != null){
             productDetail.setSize(EProductSize.valueOf(request.getSize()));
          }
@@ -110,9 +100,8 @@ public class ProductDetailService implements IProductDetailService {
             productDetail.setDough(request.getDough());
          }
          productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
-
-         save(productDetail);
-         productDetails.add(productDetail);
+         ProductDetail update = productDetailRepo.save(productDetail);
+         productDetails.add(update);
       }
       return productDetails;
    }

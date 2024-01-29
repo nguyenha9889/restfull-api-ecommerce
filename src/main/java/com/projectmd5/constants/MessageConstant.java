@@ -3,11 +3,12 @@ package com.projectmd5.constants;
 public class MessageConstant {
    public static final String USER_NOT_FOUND = "User not found";
    public static final String PRODUCT_NOT_FOUND = "Product not found";
-   public static final String PRODUCT_DETAIL_NOT_FOUND = "Product detail not found";
+   public static final String PRODUCT_DETAIL_NOT_FOUND = "Product detail Sku not found";
    public static final String CATEGORY_NOT_FOUND = "Category not found";
    public static final String ORDER_NOT_FOUND = "Order not found";
    public static final String CART_NOT_FOUND = "Cart not found";
    public static final String ROLE_NOT_FOUND = "Role not found";
+   public static final String ADDRESS_DEFAULT_NOT_FOUND = "Received address default not found";
    public static final String ADDRESS_NOT_FOUND = "Address not found";
    public static final String ADDRESSES_EMPTY = "Addresses is empty";
    public static final String ROLE_EXISTED = "Role is existed";

@@ -10,6 +10,7 @@ import com.projectmd5.model.entity.User;
 import com.projectmd5.security.principal.UserDetailCustom;
 import com.projectmd5.service.impl.OrderService;
 import com.projectmd5.service.impl.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +58,7 @@ public class OrderController {
    }
 
    @PostMapping(ORDERS)
-   public ResponseEntity<?> addOrder(@RequestBody OrderDetailRequest request) {
+   public ResponseEntity<?> addOrder(@Valid @RequestBody OrderDetailRequest request) {
       UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       User user = userService.findById(userDetail.getId());
       Orders orders = orderService.createOrder(user, request);

@@ -7,6 +7,7 @@ import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.model.dto.product.ProductResponse;
 import com.projectmd5.model.entity.Category;
 import com.projectmd5.model.entity.Product;
+import com.projectmd5.model.entity.ProductDetail;
 import com.projectmd5.repository.IProductRepository;
 import com.projectmd5.service.FilesStorageService;
 import com.projectmd5.service.ICategoryService;
@@ -44,29 +45,41 @@ public class ProductService implements IProductService {
    }
 
    @Override
-   public Product create(ProductRequest proRequest) {
-      Product product = mapper.map(proRequest, Product.class);
-      product.setCategory(categoryService.findById(proRequest.getCategoryId()));
+   public ProductResponse getProductById(Long productId){
+      Product product = findById(productId);
+      return mapperToProductResponse(product);
+   };
+
+   @Override
+   public ProductResponse addNew(ProductRequest proRequest) {
+      Category category = categoryService.findById(proRequest.getCategoryId());
       String imagePath = storageService.uploadFile((proRequest.getImage()));
-      product.setImagePath(imagePath);
-      product.setCreatedAt(new Date());
-      product.setUpdatedAt(new Date());
-      return productRepository.save(product);
+      Product product = productRepository.save(Product.builder()
+            .productName(proRequest.getProductName())
+            .category(category)
+            .description(proRequest.getDescription())
+            .imagePath(imagePath)
+            .createdAt(new Date())
+            .updatedAt(new Date())
+            .build());
+      List<ProductDetail> productDetails = productDetailService.add(product, proRequest);
+      product.setProductDetails(productDetails);
+      productRepository.save(product);
+      return mapperToProductResponse(product);
    }
 
    @Override
-   public Product update(Product product , ProductRequest proRequest) {
-      product.setCategory(categoryService.findById(proRequest.getCategoryId()));
-
+   public ProductResponse update(Long productId , ProductRequest proRequest) {
+      Product product = findById(productId);
       if (proRequest.getImage() != null && proRequest.getImage().getSize() > 0){
          product.setImagePath(storageService.uploadFile(proRequest.getImage()));
-      } else {
-         product.setImagePath(proRequest.getImagePath());
       }
+      List<ProductDetail> updateList = productDetailService.update(product, proRequest);
+      product.setProductDetails(updateList);
       product.setDescription(proRequest.getDescription());
-      product.setCreatedAt(product.getCreatedAt());
       product.setUpdatedAt(new Date());
-      return productRepository.save(product);
+      productRepository.save(product);
+      return mapperToProductResponse(product);
    }
 
    @Override
