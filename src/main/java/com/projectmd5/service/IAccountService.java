@@ -15,7 +15,7 @@ public interface IAccountService extends IGenericService<User, Long>{
    String changePassword(User user, PasswordRequest request);
    AddressResponse addNewAddress(User user, AddressRequest request);
    AddressResponse findAddressById(Long addressId);
-   List<Address> findDefaultAddress(User user);
+   Address findDefaultAddress(User user);
    AddressResponse updateAddress(Long addressId, AddressRequest request);
    List<AddressResponse> getAllAddressResponse(User user);
 }

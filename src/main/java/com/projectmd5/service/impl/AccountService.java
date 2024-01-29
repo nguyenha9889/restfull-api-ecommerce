@@ -99,14 +99,12 @@ public class AccountService implements IAccountService {
    @Override
    public AddressResponse addNewAddress(User user, AddressRequest request) {
       Address address = modelMapper.map(request, Address.class);
-      if (request.isDefaultAddress()){
-         List<Address> defaultAddress = findDefaultAddress(user);
-         if (!defaultAddress.isEmpty()){
-            defaultAddress.forEach(ad -> {
-               ad.setDefaultAddress(false);
-               addressRepository.save(ad);
-            });
-         }
+      Address defaultAddress = findDefaultAddress(user);
+      if (defaultAddress == null) {
+         address.setDefaultAddress(true);
+      } else if (request.isDefaultAddress()){
+         defaultAddress.setDefaultAddress(false);
+         addressRepository.save(defaultAddress);
       }
       address.setUser(user);
       Address newAddress = addressRepository.save(address);
@@ -129,16 +127,11 @@ public class AccountService implements IAccountService {
       address.setReceiveName(request.getReceiveName());
       address.setPhone(request.getPhone());
       address.setFullAddress(request.getFullAddress());
-      if (request.isDefaultAddress()){
-         List<Address> defaultAddress = findDefaultAddress(address.getUser());
-         if (!defaultAddress.isEmpty()){
-            defaultAddress.forEach(ad -> {
-               if (!Objects.equals(ad.getAddressId(), addressId)){
-                  ad.setDefaultAddress(false);
-                  addressRepository.save(ad);
-               }
-            });
-         }
+      if (!address.isDefaultAddress() && request.isDefaultAddress()){
+         Address defaultAddress = findDefaultAddress(address.getUser());
+         defaultAddress.setDefaultAddress(false);
+         addressRepository.save(defaultAddress);
+         address.setDefaultAddress(true);
       }
 
       Address updateAddress = addressRepository.save(address);
@@ -157,10 +150,11 @@ public class AccountService implements IAccountService {
    }
 
    @Override
-   public List<Address> findDefaultAddress(User user) {
+   public Address findDefaultAddress(User user) {
       List<Address> addresses = addressRepository.findAllByUser(user);
       return addresses.stream()
             .filter(Address::isDefaultAddress)
-            .toList();
+            .findFirst()
+            .orElse(null);
    }
 }

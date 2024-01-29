@@ -82,7 +82,9 @@ public class OrderService implements IOrderService {
       List<OrderDetail> orderDetails = new ArrayList<>();
       cartIds.forEach(cartId -> {
          Cart cart = cartService.findById(cartId);
+         OrderDetailId orderDetailId = new OrderDetailId(order.getOrderId(), cart.getProduct().getProductId());
          OrderDetail orderDetail = orderDetailRepo.save(OrderDetail.builder()
+               .orderDetailId(orderDetailId)
                .order(order)
                .product(cart.getProduct())
                .productName(cart.getProduct().getProductName())
@@ -218,7 +220,7 @@ public class OrderService implements IOrderService {
    @Override
    public OrderPageResponse getOrderPageByStatus(String status, int pageNo, int pageSize, String sortBy, String sortDir){
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
-      Page<Orders> pages = orderRepository.findAllByStatus(EOrderStatus.valueOf(status), pageable);
+      Page<Orders> pages = orderRepository.findAllByStatus(EOrderStatus.valueOf(status.trim().toUpperCase()), pageable);
       List<Orders> ordersList = pages.getContent();
       List<OrderResponse> data = ordersList.stream()
             .map(this::mapToOrderResponse)

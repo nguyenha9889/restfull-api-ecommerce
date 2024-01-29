@@ -36,7 +36,7 @@ public class AccountController {
    }
 
    @PutMapping(USER)
-   public ResponseEntity<?> updateAccount(@RequestBody AccountRequest request,
+   public ResponseEntity<?> updateAccount(@ModelAttribute AccountRequest request,
                                           BindingResult bindingResult) {
 
       validator.validate(request, bindingResult);

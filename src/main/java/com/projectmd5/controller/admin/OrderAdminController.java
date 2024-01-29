@@ -20,21 +20,15 @@ public class OrderAdminController {
          @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
          @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
          @RequestParam(name = "sortBy", defaultValue = "updatedAt", required = false) String sortBy,
-         @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir
+         @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir,
+         @RequestParam(name = "status", defaultValue = "", required = false) String status
    ) {
-      OrderPageResponse response = orderService.getOrderPage(pageNo, pageSize, sortBy, sortDir);
-      return ResponseEntity.ok(response);
-   }
-
-   @GetMapping(ORDERS_STATUS)
-   public ResponseEntity<?> getAllByStatus(
-         @PathVariable String status,
-         @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-         @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
-         @RequestParam(name = "sortBy", defaultValue = "updatedAt", required = false) String sortBy,
-         @RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir
-   ) {
-      OrderPageResponse response = orderService.getOrderPageByStatus(status, pageNo, pageSize, sortBy, sortDir);
+      OrderPageResponse response;
+      if (status.isEmpty()) {
+         response = orderService.getOrderPage(pageNo, pageSize, sortBy, sortDir);
+      } else {
+         response = orderService.getOrderPageByStatus(status, pageNo, pageSize, sortBy, sortDir);
+      }
       return ResponseEntity.ok(response);
    }
 
