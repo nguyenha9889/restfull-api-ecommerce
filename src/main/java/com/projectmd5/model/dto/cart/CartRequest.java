@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CartRequest {
    private Long cartId;
-   @NotNull(message = "productId not null")
+   @NotNull(message = "Chưa chọn sản phẩm")
    private Long productId;
    @NotNull(message = "sku not null")
    private String sku;

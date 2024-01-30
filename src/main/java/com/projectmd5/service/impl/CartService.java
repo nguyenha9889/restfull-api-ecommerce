@@ -1,6 +1,8 @@
 package com.projectmd5.service.impl;
 
+import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.exception.ResourceNotFoundException;
+import com.projectmd5.model.dto.cart.CartListResponse;
 import com.projectmd5.model.dto.cart.CartRequest;
 import com.projectmd5.model.dto.cart.CartResponse;
 import com.projectmd5.model.dto.product.ProductDetailResponse;
@@ -12,6 +14,9 @@ import com.projectmd5.repository.ICartRepository;
 import com.projectmd5.service.ICartService;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -84,13 +89,34 @@ public class CartService implements ICartService {
             .build();
    }
 
-   @Override
-   public List<Cart> findAllByUser(User user) {
-      return cartRepository.findAllByUser(user);
+   private Pageable createPageable(int pageNo, int pageSize, String sortBy, String sortDir){
+      Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+            ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+      return PageRequest.of(pageNo, pageSize, sort);
    }
 
    @Override
-   public void deleteAll(List<Cart> carts) {
+   public CartListResponse findAllByUser(User user) {
+      List<Cart> carts = cartRepository.findAllByUser(user);
+      if (carts.isEmpty()) {
+         throw new BadRequestException("Giỏ hàng trống");
+      }
+      List<CartResponse> data = carts.stream()
+            .map(this::mapToCartResponse)
+            .toList();
+      return CartListResponse.builder()
+            .data(data)
+            .totalElements(data.size())
+            .build();
+   }
+
+   @Override
+   public void deleteAll(User user) {
+      List<Cart> carts = cartRepository.findAllByUser(user);
+      if (carts.isEmpty()) {
+         throw new BadRequestException("Giỏ hàng trống");
+      }
       cartRepository.deleteAll(carts);
    }
 

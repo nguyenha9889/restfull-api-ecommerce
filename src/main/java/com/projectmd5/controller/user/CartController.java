@@ -1,6 +1,7 @@
 package com.projectmd5.controller.user;
 
 
+import com.projectmd5.model.dto.cart.CartListResponse;
 import com.projectmd5.model.dto.cart.CartRequest;
 import com.projectmd5.model.dto.cart.CartResponse;
 import com.projectmd5.model.dto.cart.CartUpdateRequest;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
@@ -32,15 +32,7 @@ public class CartController {
    public ResponseEntity<?> getCarts(){
       UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       User user = userService.findById(userDetail.getId());
-      List<Cart> carts = cartService.findAllByUser(user);
-      if (carts.isEmpty()){
-         return ResponseEntity.ok("Giỏ hàng trống");
-      }
-      List<CartResponse> responses = new ArrayList<>();
-      carts.forEach(cart -> {
-         CartResponse cartResponse = cartService.mapToCartResponse(cart);
-         responses.add(cartResponse);
-      });
+      CartListResponse responses = cartService.findAllByUser(user);
       return ResponseEntity.ok(responses);
    }
 
@@ -81,11 +73,7 @@ public class CartController {
    public ResponseEntity<?> deleteAllCarts(){
       UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       User user = userService.findById(userDetail.getId());
-      List<Cart> carts = cartService.findAllByUser(user);
-      if (carts.isEmpty()){
-         return ResponseEntity.ok("Giỏ hàng trống");
-      }
-      cartService.deleteAll(carts);
+      cartService.deleteAll(user);
       return ResponseEntity.ok(DELETE_SUCCESS);
    }
 }
