@@ -89,13 +89,6 @@ public class CartService implements ICartService {
             .build();
    }
 
-   private Pageable createPageable(int pageNo, int pageSize, String sortBy, String sortDir){
-      Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-      return PageRequest.of(pageNo, pageSize, sort);
-   }
-
    @Override
    public CartListResponse findAllByUser(User user) {
       List<Cart> carts = cartRepository.findAllByUser(user);

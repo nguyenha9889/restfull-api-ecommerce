@@ -4,8 +4,6 @@ import com.projectmd5.model.entity.Cart;
 import com.projectmd5.model.entity.Product;
 import com.projectmd5.model.entity.ProductDetail;
 import com.projectmd5.model.entity.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
