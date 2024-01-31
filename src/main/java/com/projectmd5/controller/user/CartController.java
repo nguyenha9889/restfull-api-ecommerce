@@ -1,14 +1,17 @@
 package com.projectmd5.controller.user;
 
 
-import com.projectmd5.model.dto.cart.CartListResponse;
 import com.projectmd5.model.dto.cart.CartRequest;
 import com.projectmd5.model.dto.cart.CartResponse;
 import com.projectmd5.model.dto.cart.CartUpdateRequest;
+import com.projectmd5.model.dto.order.OrderDetailRequest;
+import com.projectmd5.model.dto.order.OrderResponse;
 import com.projectmd5.model.entity.Cart;
+import com.projectmd5.model.entity.Orders;
 import com.projectmd5.model.entity.User;
 import com.projectmd5.security.principal.UserDetailCustom;
 import com.projectmd5.service.ICartService;
+import com.projectmd5.service.IOrderService;
 import com.projectmd5.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.projectmd5.constants.MessageConstant.DELETE_SUCCESS;
 import static com.projectmd5.constants.PathConstant.*;
@@ -26,11 +33,12 @@ import static com.projectmd5.constants.PathConstant.*;
 public class CartController {
    private final ICartService cartService;
    private final IUserService userService;
+   private final IOrderService orderService;
    @GetMapping(CART)
    public ResponseEntity<?> getCarts(){
       UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       User user = userService.findById(userDetail.getId());
-      CartListResponse responses = cartService.findAllByUser(user);
+      List<CartResponse> responses = cartService.findAllByUser(user);
       return ResponseEntity.ok(responses);
    }
 
@@ -47,6 +55,17 @@ public class CartController {
       User user = userService.findById(userDetail.getId());
       Cart cart = cartService.add(user, cartRequest);
       CartResponse response = cartService.mapToCartResponse(cart);
+      return new ResponseEntity<>(response, HttpStatus.CREATED);
+   }
+
+   @PostMapping(CART_BUY_NOW)
+   public ResponseEntity<?> cartBuyNow(@Valid @RequestBody CartRequest cartRequest){
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      Cart cart = cartService.add(user, cartRequest);
+      OrderDetailRequest request = new OrderDetailRequest(Collections.singletonList(cart.getCartId()));
+      Orders orders = orderService.createOrder(user, request);
+      OrderResponse response = orderService.mapToOrderResponse(orders);
       return new ResponseEntity<>(response, HttpStatus.CREATED);
    }
 

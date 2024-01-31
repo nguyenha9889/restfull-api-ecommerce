@@ -29,6 +29,7 @@ public class PathConstant {
    public static final String ORDERS_ID ="/orders/{orderId}";
    public static final String ORDERS_ID_CANCEL ="/orders/{orderId}/cancel";
    public static final String CART = "/cart";
+   public static final String CART_BUY_NOW = "/cart/buy-now";
    public static final String CART_ID = "/cart/{cartId}";
    public static final String USER_BY_ID = USER + "/{userId}";
 }

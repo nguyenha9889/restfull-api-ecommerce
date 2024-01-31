@@ -2,7 +2,6 @@ package com.projectmd5.service.impl;
 
 import com.projectmd5.exception.BadRequestException;
 import com.projectmd5.exception.ResourceNotFoundException;
-import com.projectmd5.model.dto.cart.CartListResponse;
 import com.projectmd5.model.dto.cart.CartRequest;
 import com.projectmd5.model.dto.cart.CartResponse;
 import com.projectmd5.model.dto.product.ProductDetailResponse;
@@ -14,9 +13,6 @@ import com.projectmd5.repository.ICartRepository;
 import com.projectmd5.service.ICartService;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -90,18 +86,14 @@ public class CartService implements ICartService {
    }
 
    @Override
-   public CartListResponse findAllByUser(User user) {
+   public List<CartResponse> findAllByUser(User user) {
       List<Cart> carts = cartRepository.findAllByUser(user);
       if (carts.isEmpty()) {
          throw new BadRequestException("Giỏ hàng trống");
       }
-      List<CartResponse> data = carts.stream()
+      return carts.stream()
             .map(this::mapToCartResponse)
             .toList();
-      return CartListResponse.builder()
-            .data(data)
-            .totalElements(data.size())
-            .build();
    }
 
    @Override
