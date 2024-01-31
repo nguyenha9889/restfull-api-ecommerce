@@ -8,8 +8,10 @@ import com.projectmd5.model.entity.User;
 import java.util.List;
 
 public interface ICartService extends IGenericService<Cart, Long>{
+   CartResponse getCartByUserAndCartId(User user, Long cartId);
+   Cart findByUserAndCartId(User user, Long cartId);
    Cart add(User user, CartRequest cartRequest);
-   Cart update(Long cartItemId, Integer quantity);
+   Cart update(User user, Long cartItemId, Integer quantity);
    CartResponse mapToCartResponse(Cart cart);
    List<CartResponse> findAllByUser(User user);
    void deleteAll(User user);

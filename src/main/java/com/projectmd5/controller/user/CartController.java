@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,8 +43,9 @@ public class CartController {
 
    @GetMapping(CART_ID)
    public ResponseEntity<?> getCartById(@PathVariable Long cartId){
-      Cart cart = cartService.findById(cartId);
-      CartResponse response = cartService.mapToCartResponse(cart);
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      CartResponse response = cartService.getCartByUserAndCartId(user, cartId);
      return ResponseEntity.ok(response);
    }
 
@@ -71,17 +71,18 @@ public class CartController {
 
    @PutMapping(CART_ID)
    public ResponseEntity<?> updateCart(@PathVariable Long cartId , @Valid @RequestBody CartUpdateRequest request){
-      Cart cart = cartService.update(cartId, request.getQuantity());
-      if (cart == null){
-         return ResponseEntity.ok( "CartId " + cartId +" không còn trong giỏ hàng");
-      }
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      Cart cart = cartService.update( user, cartId, request.getQuantity());
       CartResponse response = cartService.mapToCartResponse(cart);
       return ResponseEntity.ok(response);
    }
 
    @DeleteMapping(CART_ID)
    public ResponseEntity<?> deleteCartById(@PathVariable Long cartId){
-      Cart cart = cartService.findById(cartId);
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      Cart cart = cartService.findByUserAndCartId(user, cartId);
       cartService.delete(cart);
       return ResponseEntity.ok(DELETE_SUCCESS);
    }

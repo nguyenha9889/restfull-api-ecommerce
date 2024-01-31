@@ -32,11 +32,11 @@ public class ProductValidator implements Validator {
          errors.rejectValue("categoryId", CATEGORY_NULL);
       }
 
-      if (request.getImage() == null && request.getProductId() == null){
+      if (request.getProductId() == null && request.getImage().getSize() == 0){
          errors.rejectValue("image", FILE_NULL);
       }
 
-      if (request.getProductDetails() == null){
+      if (request.getProductDetails().isEmpty()){
          errors.rejectValue("productDetails", PRICE_NULL);
       }
 

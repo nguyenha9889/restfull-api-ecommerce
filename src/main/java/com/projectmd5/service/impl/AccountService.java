@@ -112,16 +112,16 @@ public class AccountService implements IAccountService {
    }
 
    @Override
-   public AddressResponse findAddressById(Long addressId) {
-      Address address = addressRepository.findById(addressId).orElseThrow(
+   public AddressResponse findAddressByIdAndUser(User user, Long addressId) {
+      Address address = addressRepository.findByAddressIdAndUser(addressId , user).orElseThrow(
             () -> new ResourceNotFoundException(ADDRESS_NOT_FOUND)
       );
       return modelMapper.map(address, AddressResponse.class);
    }
 
    @Override
-   public AddressResponse updateAddress(Long addressId, AddressRequest request) {
-      Address address = addressRepository.findById(addressId).orElseThrow(
+   public AddressResponse updateAddress(User user, Long addressId, AddressRequest request) {
+      Address address = addressRepository.findByAddressIdAndUser(addressId , user).orElseThrow(
             () -> new ResourceNotFoundException(ADDRESS_NOT_FOUND)
       );
       address.setReceiveName(request.getReceiveName());

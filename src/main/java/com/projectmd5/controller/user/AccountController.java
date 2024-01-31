@@ -78,14 +78,18 @@ public class AccountController {
 
    @GetMapping(USER_ADDRESS_ID)
    public ResponseEntity<?> getAddressById(@PathVariable Long addressId) {
-      AddressResponse response = accountService.findAddressById(addressId);
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      AddressResponse response = accountService.findAddressByIdAndUser(user, addressId);
       return ResponseEntity.ok(response);
    }
 
    @PutMapping(USER_ADDRESS_ID)
    public ResponseEntity<?> updateAddress(@PathVariable Long addressId,
                                           @Valid @RequestBody AddressRequest request) {
-      AddressResponse response = accountService.updateAddress(addressId, request);
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      AddressResponse response = accountService.updateAddress(user, addressId, request);
       return ResponseEntity.ok(response);
    }
 }

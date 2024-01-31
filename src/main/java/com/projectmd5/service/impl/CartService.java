@@ -27,21 +27,18 @@ public class CartService implements ICartService {
    private final IProductService productService;
 
    @Override
-   public Cart findById(Long id) {
-      return cartRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException(CART_NOT_FOUND));
+   public Cart findByUserAndCartId(User user, Long cartId) {
+      return cartRepository.findCartByUserAndCartId(user, cartId).orElseThrow(
+            () -> new ResourceNotFoundException(CART_NOT_FOUND)
+      );
    }
-
    @Override
-   public void save(Cart cart) {
-      cartRepository.save(cart);
+   public CartResponse getCartByUserAndCartId(User user, Long cartId) {
+      Cart cart = cartRepository.findCartByUserAndCartId(user, cartId).orElseThrow(
+            () -> new ResourceNotFoundException(CART_NOT_FOUND)
+      );
+      return mapToCartResponse(cart);
    }
-
-   @Override
-   public void delete(Cart cart) {
-      cartRepository.delete(cart);
-   }
-
    @Override
    public Cart add(User user, CartRequest cartRequest) {
       Product product = productService.findById(cartRequest.getProductId());
@@ -106,13 +103,20 @@ public class CartService implements ICartService {
    }
 
    @Override
-   public Cart update(Long cartId, Integer newQuantity) {
-      Cart cart = findById(cartId);
+   public Cart update(User user, Long cartId, Integer newQuantity) {
+      Cart cart = cartRepository.findCartByUserAndCartId(user, cartId).orElseThrow(
+            () -> new ResourceNotFoundException(CART_NOT_FOUND)
+      );
       if (newQuantity == 0) {
          delete(cart);
          return null;
       }
       cart.setQuantity(newQuantity);
       return cartRepository.save(cart);
+   }
+
+   @Override
+   public void delete(Cart cart) {
+      cartRepository.delete(cart);
    }
 }

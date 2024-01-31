@@ -53,7 +53,9 @@ public class OrderController {
 
    @PutMapping(ORDERS_ID_CANCEL)
    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
-      OrderResponse response = orderService.cancelOrderWaiting(orderId);
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      OrderResponse response = orderService.cancelOrderWaiting(user, orderId);
       return ResponseEntity.ok(response);
    }
 
@@ -68,7 +70,9 @@ public class OrderController {
 
    @PutMapping(ORDERS_ID)
    public ResponseEntity<?> checkOut(@PathVariable Long orderId, @RequestBody OrderRequest request) {
-      orderService.checkOut(orderId, request);
+      UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      User user = userService.findById(userDetail.getId());
+      orderService.checkOut(user, orderId, request);
       MessageResponse response = new MessageResponse("Order successfully");
       return ResponseEntity.ok(response);
    }

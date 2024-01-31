@@ -8,9 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface IOrderRepository extends JpaRepository<Orders, Long>{
    Page<Orders> findAllByStatus(EOrderStatus status, Pageable pageable);
    Page<Orders> findAllByUser(User user, Pageable pageable);
    Page<Orders> findAllByUserAndStatus(User user, EOrderStatus status, Pageable pageable);
+   Optional<Orders> findByUserAndOrderId(User user, Long id);
 }

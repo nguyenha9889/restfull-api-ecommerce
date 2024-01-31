@@ -39,17 +39,16 @@ public class OrderService implements IOrderService {
    @Override
    public Orders findById(Long id) {
       return orderRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException(ORDER_NOT_FOUND));
+            () -> new ResourceNotFoundException(ORDER_NOT_FOUND)
+      );
    }
 
    @Override
-   public void save(Orders orders) {
-      orderRepository.save(orders);
-   }
-
-   @Override
-   public void delete(Orders orders) {
-      orderRepository.delete(orders);
+   public OrderResponse findByUserAndOrderId(User user, Long id) {
+      Orders orders = orderRepository.findByUserAndOrderId(user, id).orElseThrow(
+            () -> new ResourceNotFoundException(ORDER_NOT_FOUND)
+      );
+      return mapToOrderResponse(orders);
    }
 
    @Override
@@ -81,7 +80,7 @@ public class OrderService implements IOrderService {
       List<Long> cartIds = orderDetailRequest.getCartIds();
       List<OrderDetail> orderDetails = new ArrayList<>();
       cartIds.forEach(cartId -> {
-         Cart cart = cartService.findById(cartId);
+         Cart cart = cartService.findByUserAndCartId(order.getUser(), cartId);
          OrderDetailId orderDetailId = new OrderDetailId(order.getOrderId(), cart.getProduct().getProductId());
          OrderDetail orderDetail = orderDetailRepo.save(OrderDetail.builder()
                .orderDetailId(orderDetailId)
@@ -131,8 +130,8 @@ public class OrderService implements IOrderService {
    }
 
    @Override
-   public void checkOut(Long orderId, OrderRequest orderRequest) {
-      Orders orders = orderRepository.findById(orderId).orElseThrow(
+   public void checkOut(User user, Long orderId, OrderRequest orderRequest) {
+      Orders orders = orderRepository.findByUserAndOrderId(user, orderId).orElseThrow(
             () -> new ResourceNotFoundException(ORDER_NOT_FOUND)
       );
       orders.setNote(orderRequest.getNote());
@@ -140,7 +139,7 @@ public class OrderService implements IOrderService {
       orderRepository.save(orders);
    }
 
-   // get all order by user
+   // get all orders of user
    @Override
    public OrderPageResponse getOrderPageByUser(User user, int pageNo, int pageSize, String sortBy, String sortDir){
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
@@ -159,7 +158,7 @@ public class OrderService implements IOrderService {
             .build();
    }
 
-   // get all order by user and status
+   // get all orders of user and status
    @Override
    public OrderPageResponse getOrderPageByUserAndStatus(User user, String status, int pageNo, int pageSize, String sortBy, String sortDir){
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
@@ -179,8 +178,10 @@ public class OrderService implements IOrderService {
    }
 
    @Override
-   public OrderResponse cancelOrderWaiting(Long orderId) {
-      Orders orders = findById(orderId);
+   public OrderResponse cancelOrderWaiting(User user, Long orderId) {
+      Orders orders = orderRepository.findByUserAndOrderId(user, orderId).orElseThrow(
+            () -> new ResourceNotFoundException(ORDER_NOT_FOUND)
+      );
       if (!orders.getStatus().equals(EOrderStatus.WAITING)) {
          throw new BadRequestException("Order is confirmed, can not cancel");
       }
@@ -199,6 +200,7 @@ public class OrderService implements IOrderService {
       return PageRequest.of(pageNo, pageSize, sort);
    }
 
+   // get all orders for admin
    @Override
    public OrderPageResponse getOrderPage(int pageNo, int pageSize, String sortBy, String sortDir){
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
@@ -217,6 +219,7 @@ public class OrderService implements IOrderService {
             .build();
    }
 
+   // get all orders for admin by status
    @Override
    public OrderPageResponse getOrderPageByStatus(String status, int pageNo, int pageSize, String sortBy, String sortDir){
       Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
@@ -235,6 +238,7 @@ public class OrderService implements IOrderService {
             .build();
    }
 
+   // admin update status for order
    @Override
    public OrderResponse updateOrderStatus(Long orderId, String status) {
       Orders orders = findById(orderId);
