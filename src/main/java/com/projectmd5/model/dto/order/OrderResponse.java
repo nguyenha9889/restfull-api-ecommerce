@@ -19,8 +19,8 @@ public class OrderResponse {
    private Long totalPrice;
    private String status;
    private List<OrderDetailResponse> orderDetails;
-   @JsonFormat(pattern = "MM-dd-yyyy")
+   @JsonFormat(pattern = "MM-dd-yyyy HH:mm")
    private Date createdAt;
-   @JsonFormat(pattern = "MM-dd-yyyy")
+   @JsonFormat(pattern = "MM-dd-yyyy HH:mm")
    private Date updatedAt;
 }
