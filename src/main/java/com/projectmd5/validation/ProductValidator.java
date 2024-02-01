@@ -33,9 +33,7 @@ public class ProductValidator implements Validator {
       }
 
       if (request.getProductId() == null){
-         if (request.getImage() == null){
-            errors.rejectValue("image", FILE_NULL);
-         } else if (request.getImage().getSize() == 0){
+         if (request.getImages() == null){
             errors.rejectValue("image", FILE_NULL);
          }
       }
@@ -49,10 +47,6 @@ public class ProductValidator implements Validator {
             errors.rejectValue("productName", PRODUCT_EXISTED);
          }
 
-         if (request.getImage() != null && !isSupportedImageType(request.getImage())){
-            errors.rejectValue("image", FILE_UPLOAD_RULE);
-         }
-
          request.getProductDetails().forEach(productDetail -> {
             if (productDetail.getUnitPrice() == null || productDetail.getUnitPrice() <= 0){
                errors.rejectValue("productDetails", PRICE_RULE);
@@ -60,13 +54,5 @@ public class ProductValidator implements Validator {
          });
       }
 
-   }
-
-   private boolean isSupportedImageType(MultipartFile image) {
-      String imageType = StringUtils.getFilenameExtension(image.getOriginalFilename());
-      assert imageType != null;
-      return imageType.equals("png")
-            || imageType.equals("jpg")
-            || imageType.equals("jpeg");
    }
 }

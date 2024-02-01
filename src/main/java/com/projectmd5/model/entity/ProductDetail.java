@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 @Table(name = "product_detail")
 public class ProductDetail {
    @Id
-   @Column(length = 100)
-   private String sku;
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private Long productDetailId;
 
    @ToString.Exclude
    @JsonIgnore

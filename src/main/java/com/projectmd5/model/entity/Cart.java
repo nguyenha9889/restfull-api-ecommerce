@@ -26,7 +26,7 @@ public class Cart {
    private Product product;
 
    @OneToOne
-   @JoinColumn(name = "sku")
+   @JoinColumn(name = "productDetailId")
    private ProductDetail productDetail;
 
    private int quantity;

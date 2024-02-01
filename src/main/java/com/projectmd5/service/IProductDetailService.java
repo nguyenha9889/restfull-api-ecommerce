@@ -7,7 +7,7 @@ import com.projectmd5.model.entity.ProductDetail;
 
 import java.util.List;
 
-public interface IProductDetailService extends IGenericService<ProductDetail, String>{
+public interface IProductDetailService extends IGenericService<ProductDetail, Long>{
    List<ProductDetail> add(Product product, ProductRequest proRequest);
    List<ProductDetail> update(Product product, ProductRequest proRequest);
    List<ProductDetailResponse> mapperToDetailsListResponse(List<ProductDetail> productDetails);

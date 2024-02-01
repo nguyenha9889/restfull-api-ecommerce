@@ -30,7 +30,7 @@ public class OrderDetail {
    private String productName;
 
    @OneToOne
-   @JoinColumn(name = "sku")
+   @JoinColumn(name = "productDetailId")
    private ProductDetail productDetail;
 
    private int quantity;

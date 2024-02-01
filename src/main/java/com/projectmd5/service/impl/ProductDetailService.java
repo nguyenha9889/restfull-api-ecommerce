@@ -1,6 +1,5 @@
 package com.projectmd5.service.impl;
 
-import com.projectmd5.exception.ResourceNotFoundException;
 import com.projectmd5.model.dto.product.ProductDetailRequest;
 import com.projectmd5.model.dto.product.ProductDetailResponse;
 import com.projectmd5.model.dto.product.ProductRequest;
@@ -15,18 +14,11 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import static com.projectmd5.constants.MessageConstant.PRODUCT_DETAIL_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class ProductDetailService implements IProductDetailService {
    private final IProductDetailRepository productDetailRepo;
-   @Override
-   public ProductDetail findById(String sku) {
-      return productDetailRepo.findById(sku).orElseThrow(() -> new ResourceNotFoundException(PRODUCT_DETAIL_NOT_FOUND));
-   }
 
    @Override
    public void save(ProductDetail productDetail) {
@@ -40,7 +32,6 @@ public class ProductDetailService implements IProductDetailService {
 
       for (ProductDetailRequest request : detailsRequest) {
          ProductDetail productDetail = new ProductDetail();
-         productDetail.setSku(UUID.randomUUID().toString());
          productDetail.setProduct(product);
          if (request.getSize() != null){
             productDetail.setSize(EProductSize.valueOf(request.getSize()));
@@ -69,7 +60,7 @@ public class ProductDetailService implements IProductDetailService {
    @Override
    public ProductDetailResponse mapperToDetailResponse(ProductDetail productDetail) {
       ProductDetailResponse detailResponse = new ProductDetailResponse();
-      detailResponse.setSku(productDetail.getSku());
+      detailResponse.setId(productDetail.getProductDetailId());
       if (productDetail.getSize() != null){
          detailResponse.setSize(productDetail.getSize().name());
       }
@@ -86,20 +77,26 @@ public class ProductDetailService implements IProductDetailService {
       List<ProductDetail> productDetails = new ArrayList<>();
       for (ProductDetailRequest request : detailsRequest) {
          ProductDetail productDetail;
-         if (request.getSku() == null) {
+         if (request.getId() == null){
             productDetail = new ProductDetail();
-            productDetail.setSku(UUID.randomUUID().toString());
             productDetail.setProduct(product);
+            if (request.getSize() != null){
+               productDetail.setSize(EProductSize.valueOf(request.getSize()));
+            }
+            if (request.getDough() != null){
+               productDetail.setDough(request.getDough());
+            }
+            productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
          } else {
-            productDetail = findById(request.getSku());
+            productDetail = findById(request.getId());
+            if (request.getSize() != null){
+               productDetail.setSize(EProductSize.valueOf(request.getSize()));
+            }
+            if (request.getDough() != null){
+               productDetail.setDough(request.getDough());
+            }
+            productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
          }
-         if (request.getSize() != null){
-            productDetail.setSize(EProductSize.valueOf(request.getSize()));
-         }
-         if (request.getDough() != null){
-            productDetail.setDough(request.getDough());
-         }
-         productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
          ProductDetail update = productDetailRepo.save(productDetail);
          productDetails.add(update);
       }

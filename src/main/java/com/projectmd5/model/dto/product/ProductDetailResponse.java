@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductDetailResponse {
-   private String sku;
+   private Long id;
    private String size;
    private String dough;
    private Long unitPrice;
