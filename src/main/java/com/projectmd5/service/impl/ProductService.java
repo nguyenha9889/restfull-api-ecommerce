@@ -48,7 +48,7 @@ public class ProductService implements IProductService {
    public ProductResponse getProductById(Long productId){
       Product product = findById(productId);
       return mapperToProductResponse(product);
-   };
+   }
 
    @Override
    public ProductResponse addNew(ProductRequest proRequest) {

@@ -4,11 +4,9 @@ import com.projectmd5.model.dto.product.ProductRequest;
 import com.projectmd5.service.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.springframework.web.multipart.MultipartFile;
 
 import static com.projectmd5.constants.MessageConstant.*;
 
