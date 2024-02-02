@@ -53,7 +53,7 @@ public class ProductService implements IProductService {
    @Override
    public ProductResponse addNew(ProductRequest proRequest) {
       Category category = categoryService.findById(proRequest.getCategoryId());
-      String imagePath = storageService.uploadFile((proRequest.getImages().get(0)));
+      String imagePath = storageService.uploadFile((proRequest.getImage()));
       Product product = productRepository.save(Product.builder()
             .productName(proRequest.getProductName())
             .category(category)
@@ -71,8 +71,8 @@ public class ProductService implements IProductService {
    @Override
    public ProductResponse update(Long productId , ProductRequest proRequest) {
       Product product = findById(productId);
-      if (proRequest.getImages() != null){
-         product.setImagePath(storageService.uploadFile(proRequest.getImages().get(0)));
+      if (proRequest.getImage() != null){
+         product.setImagePath(storageService.uploadFile(proRequest.getImage()));
       }
       List<ProductDetail> updateList = productDetailService.update(product, proRequest);
       product.getProductDetails().clear();

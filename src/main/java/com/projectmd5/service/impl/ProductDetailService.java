@@ -15,10 +15,29 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.projectmd5.constants.MessageConstant.PRODUCT_DETAIL_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class ProductDetailService implements IProductDetailService {
    private final IProductDetailRepository productDetailRepo;
+
+   @Override
+   public List<ProductDetail> findAll() {
+      return productDetailRepo.findAll();
+   }
+
+   @Override
+   public ProductDetail findById(Long id) {
+      return productDetailRepo.findById(id).orElseThrow(
+            () -> new RuntimeException(PRODUCT_DETAIL_NOT_FOUND)
+      );
+   }
+
+   @Override
+   public void delete(ProductDetail productDetail) {
+      productDetailRepo.delete(findById(productDetail.getProductDetailId()));
+   }
 
    @Override
    public void save(ProductDetail productDetail) {
@@ -60,7 +79,7 @@ public class ProductDetailService implements IProductDetailService {
    @Override
    public ProductDetailResponse mapperToDetailResponse(ProductDetail productDetail) {
       ProductDetailResponse detailResponse = new ProductDetailResponse();
-      detailResponse.setId(productDetail.getProductDetailId());
+      detailResponse.setDetailId(productDetail.getProductDetailId());
       if (productDetail.getSize() != null){
          detailResponse.setSize(productDetail.getSize().name());
       }
@@ -75,28 +94,22 @@ public class ProductDetailService implements IProductDetailService {
    public List<ProductDetail> update(Product product, ProductRequest proRequest){
       List<ProductDetailRequest> detailsRequest = proRequest.getProductDetails();
       List<ProductDetail> productDetails = new ArrayList<>();
+
       for (ProductDetailRequest request : detailsRequest) {
          ProductDetail productDetail;
-         if (request.getId() == null){
+         if (request.getDetailId() == null){
             productDetail = new ProductDetail();
             productDetail.setProduct(product);
-            if (request.getSize() != null){
-               productDetail.setSize(EProductSize.valueOf(request.getSize()));
-            }
-            if (request.getDough() != null){
-               productDetail.setDough(request.getDough());
-            }
-            productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
          } else {
-            productDetail = findById(request.getId());
-            if (request.getSize() != null){
-               productDetail.setSize(EProductSize.valueOf(request.getSize()));
-            }
-            if (request.getDough() != null){
-               productDetail.setDough(request.getDough());
-            }
-            productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
+            productDetail = findById(request.getDetailId());
          }
+         if (request.getSize() != null){
+            productDetail.setSize(EProductSize.valueOf(request.getSize()));
+         }
+         if (request.getDough() != null){
+            productDetail.setDough(request.getDough());
+         }
+         productDetail.setUnitPrice(BigDecimal.valueOf(request.getUnitPrice()));
          ProductDetail update = productDetailRepo.save(productDetail);
          productDetails.add(update);
       }

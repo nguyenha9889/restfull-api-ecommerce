@@ -4,6 +4,7 @@ package com.projectmd5.controller.user;
 import com.projectmd5.model.dto.cart.CartRequest;
 import com.projectmd5.model.dto.cart.CartResponse;
 import com.projectmd5.model.dto.cart.CartUpdateRequest;
+import com.projectmd5.model.dto.order.CartCheckOut;
 import com.projectmd5.model.dto.order.OrderDetailRequest;
 import com.projectmd5.model.dto.order.OrderResponse;
 import com.projectmd5.model.entity.Cart;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,7 +65,8 @@ public class CartController {
       UserDetailCustom userDetail = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       User user = userService.findById(userDetail.getId());
       Cart cart = cartService.add(user, cartRequest);
-      OrderDetailRequest request = new OrderDetailRequest(Collections.singletonList(cart.getCartId()));
+      CartCheckOut cartCheckOut = CartCheckOut.builder().cartId(cart.getCartId()).build();
+      OrderDetailRequest request = new OrderDetailRequest(Collections.singletonList(cartCheckOut));
       Orders orders = orderService.createOrder(user, request);
       OrderResponse response = orderService.mapToOrderResponse(orders);
       return new ResponseEntity<>(response, HttpStatus.CREATED);

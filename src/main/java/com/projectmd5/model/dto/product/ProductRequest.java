@@ -17,6 +17,6 @@ public class ProductRequest {
    private List<ProductDetailRequest> productDetails;
    private String description;
    private Long categoryId;
-   private List<MultipartFile> images;
+   private MultipartFile image;
    private String imagePath;
 }

@@ -14,7 +14,7 @@ public class CartRequest {
    @NotNull(message = "Chưa chọn sản phẩm")
    private Long productId;
    @NotNull(message = "Product detail not null")
-   private Long id;
+   private Long detailId;
    @Min(value = 1, message = "Số lượng sản phẩm phải lớn hơn 0")
    private int quantity;
 }

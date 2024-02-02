@@ -31,7 +31,7 @@ public class ProductValidator implements Validator {
       }
 
       if (request.getProductId() == null){
-         if (request.getImages() == null){
+         if (request.getImage() == null){
             errors.rejectValue("image", FILE_NULL);
          }
       }

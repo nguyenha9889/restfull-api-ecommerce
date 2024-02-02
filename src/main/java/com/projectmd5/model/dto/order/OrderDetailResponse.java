@@ -17,3 +17,4 @@ public class OrderDetailResponse {
       private ProductDetailResponse productDetail;
       private int quantity;
 }
+

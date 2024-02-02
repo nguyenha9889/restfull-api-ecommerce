@@ -42,7 +42,7 @@ public class CartService implements ICartService {
    @Override
    public Cart add(User user, CartRequest cartRequest) {
       Product product = productService.findById(cartRequest.getProductId());
-      ProductDetail productDetail = productDetailService.findById(cartRequest.getId());
+      ProductDetail productDetail = productDetailService.findById(cartRequest.getDetailId());
       Cart cart = cartRepository.findCartByUserAndProductAndProductDetail(user, product, productDetail);
       if (cart != null) {
          int newQuantity = cart.getQuantity() + cartRequest.getQuantity();
@@ -64,7 +64,7 @@ public class CartService implements ICartService {
       Product product = cart.getProduct();
       ProductDetail productDetail = cart.getProductDetail();
       ProductDetailResponse detailResponse = new ProductDetailResponse();
-      detailResponse.setId(productDetail.getProductDetailId());
+      detailResponse.setDetailId(productDetail.getProductDetailId());
       if (productDetail.getSize() != null) {
          detailResponse.setSize(productDetail.getSize().name());
       }

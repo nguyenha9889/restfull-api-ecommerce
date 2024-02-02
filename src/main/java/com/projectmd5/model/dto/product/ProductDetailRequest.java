@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailRequest {
-   private Long id;
+   private Long detailId;
    private String size;
    private String dough;
    private Long unitPrice;

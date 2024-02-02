@@ -70,17 +70,23 @@ public class OrderService implements IOrderService {
       orders.setOrderDetails(orderDetails);
 
       BigDecimal totalPrice = orderDetails.stream()
-            .map(orderDetail -> orderDetail.getProductDetail().getUnitPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity())))
+            .map(orderDetail -> {
+               if (orderDetail.getProductDetail().getUnitPrice() == null) {
+                  return BigDecimal.ZERO;
+               } else {
+                  return orderDetail.getProductDetail().getUnitPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
+               }
+            })
             .reduce(BigDecimal.ZERO, BigDecimal::add);
       orders.setTotalPrice(totalPrice);
       return orderRepository.save(orders);
    }
 
    private List<OrderDetail> createOrderDetails(Orders order, OrderDetailRequest orderDetailRequest) {
-      List<Long> cartIds = orderDetailRequest.getCartIds();
+      List<CartCheckOut> cartIds = orderDetailRequest.getCartIds();
       List<OrderDetail> orderDetails = new ArrayList<>();
       cartIds.forEach(cartId -> {
-         Cart cart = cartService.findByUserAndCartId(order.getUser(), cartId);
+         Cart cart = cartService.findByUserAndCartId(order.getUser(), cartId.getCartId());
          OrderDetailId orderDetailId = new OrderDetailId(order.getOrderId(), cart.getProduct().getProductId());
          OrderDetail orderDetail = orderDetailRepo.save(OrderDetail.builder()
                .orderDetailId(orderDetailId)
